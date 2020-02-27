@@ -41,7 +41,7 @@ namespace Tofunaut.Deeep
         {
             if(_instance != null)
             {
-                Debug.LogError("AppManager instance is not null");
+                Debug.LogError("AppManager already exists");
                 Destroy(this);
                 return;
             }
@@ -54,7 +54,7 @@ namespace Tofunaut.Deeep
             _stateMachine = new TofuStateMachine();
             _stateMachine.Register(State.Init, Init_Enter, Init_Update, null);
             _stateMachine.Register(State.StartMenu, StartMenu_Enter, null, null);
-            _stateMachine.Register(State.InGame, InGame_Enter, null, null);
+            _stateMachine.Register(State.InGame, InGame_Enter, null, InGame_Exit);
             _stateMachine.ChangeState(State.Init);
         }
 
@@ -72,6 +72,8 @@ namespace Tofunaut.Deeep
         {
             _stateMachine.Update(Time.deltaTime);
         }
+
+        #region State Machine
 
         // --------------------------------------------------------------------------------------------
         private void Init_Enter()
@@ -109,7 +111,41 @@ namespace Tofunaut.Deeep
         // --------------------------------------------------------------------------------------------
         private void InGame_Enter()
         {
-            Debug.Log("in game!");
+            InGameController inGameController = gameObject.RequireComponent<InGameController>();
+            inGameController.enabled = true;
+            inGameController.Completed += InGameController_Completed;
+        }
+
+        // --------------------------------------------------------------------------------------------
+        private void InGame_Exit()
+        {
+            InGameController inGameController = gameObject.RequireComponent<InGameController>();
+            inGameController.enabled = false;
+            inGameController.Completed -= InGameController_Completed;
+        }
+
+        #endregion State Machine
+
+        // --------------------------------------------------------------------------------------------
+        private void InGameController_Completed(object sender, ControllerCompletedEventArgs e)
+        {
+            InGameControllerCompletedEventArgs inGameControllerCompletedEventArgs = e as InGameControllerCompletedEventArgs;
+            switch(inGameControllerCompletedEventArgs.intention)
+            {
+                case InGameControllerCompletedEventArgs.Intention.StartMenu:
+                    _stateMachine.ChangeState(State.StartMenu);
+                    break;
+                case InGameControllerCompletedEventArgs.Intention.QuitApp:
+                    QuitApp();
+                    break;
+            }
+        }
+
+        // --------------------------------------------------------------------------------------------
+        private void QuitApp()
+        {
+            // TODO: do some app clean up here
+            Application.Quit();
         }
     }
 }
