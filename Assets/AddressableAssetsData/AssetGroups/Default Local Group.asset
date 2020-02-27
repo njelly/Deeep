@@ -25,6 +25,10 @@ MonoBehaviour:
     m_Address: PlayerActorView
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: fa6661d33a1044749828f5210389f359
+    m_Address: Code SDF
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 1e77ad487a32b4e499e1a738113f3c63, type: 2}
   m_SchemaSet:

@@ -20,22 +20,21 @@ namespace Tofunaut.Deeep
         public static class State
         {
             public const string Init = "init";
-            public const string Loading = "loading";
-            public const string Start = "start";
+            public const string StartMenu = "start_menu";
             public const string InGame = "in_game";
         }
 
         private static AppManager _instance;
 
         public static AssetManager AssetManager => _instance._assetManager;
-        public static SharpCamera Camera => _instance._gameCamera;
+        public static SharpCamera Camera => _instance._camera;
 
         [Header("Debug")]
         [SerializeField] private bool _skipToGame;
 
         private TofuStateMachine _stateMachine;
         private AssetManager _assetManager;
-        private SharpCamera _gameCamera;
+        private SharpCamera _camera;
 
         // --------------------------------------------------------------------------------------------
         private void Awake()
@@ -48,14 +47,14 @@ namespace Tofunaut.Deeep
             }
 
             _instance = this;
+            DontDestroyOnLoad(gameObject);
 
             _assetManager = new AssetManager();
 
             _stateMachine = new TofuStateMachine();
-            _stateMachine.Register(State.Init, Init_Enter, null, null);
-            _stateMachine.Register(State.Loading, null, null, null);
-            _stateMachine.Register(State.Start, null, null, null);
-            _stateMachine.Register(State.InGame, null, null, null);
+            _stateMachine.Register(State.Init, Init_Enter, Init_Update, null);
+            _stateMachine.Register(State.StartMenu, StartMenu_Enter, null, null);
+            _stateMachine.Register(State.InGame, InGame_Enter, null, null);
             _stateMachine.ChangeState(State.Init);
         }
 
@@ -77,18 +76,40 @@ namespace Tofunaut.Deeep
         // --------------------------------------------------------------------------------------------
         private void Init_Enter()
         {
-            _gameCamera = SharpCamera.Main();
-            _gameCamera.Render(transform);
+            _camera = SharpCamera.Main();
+            _camera.CameraOrthographic = true;
+            _camera.LocalPosition = new Vector3(0f, 0f, -10f);
+            _camera.Render(transform);
 
-            _gameCamera.UnityCamera.orthographic = true;
-            _gameCamera.LocalPosition = new Vector3(0f, 0f, -10f);
+            AssetManager.Load<TMPro.TMP_FontAsset>(AssetPaths.Fonts.Code);
+        }
 
-#if UNITY_EDITOR
-            if(_skipToGame)
+        // --------------------------------------------------------------------------------------------
+        private void Init_Update(float deltaTime)
+        {
+            if(_assetManager.Ready)
             {
-                _stateMachine.ChangeState(State.InGame);
-            }
+#if UNITY_EDITOR
+                if (_skipToGame)
+                {
+                    _stateMachine.ChangeState(State.InGame);
+                    return;
+                }
 #endif
+                _stateMachine.ChangeState(State.StartMenu);
+            }
+        }
+
+        // --------------------------------------------------------------------------------------------
+        private void StartMenu_Enter()
+        {
+            Debug.Log("start menu");
+        }
+
+        // --------------------------------------------------------------------------------------------
+        private void InGame_Enter()
+        {
+            Debug.Log("in game!");
         }
     }
 }

@@ -12,6 +12,12 @@ namespace Tofunaut.Deeep
     public static class AssetPaths
     {
         // --------------------------------------------------------------------------------------------
+        public static class Fonts
+        {
+            public const string Code = "Code SDF";
+        }
+
+        // --------------------------------------------------------------------------------------------
         public static class Prefabs
         {
             public const string PlayerActorView = "PlayerActorView";
