@@ -58,3 +58,8 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+/Assets/_Game/Scripts/TofuUnity
+/Assets/_Game/Scripts/TofuUnity.meta
+/Assets/_Game/Scripts/TofuCore
+/Assets/_Game/Scripts/TofuCore.meta
+
