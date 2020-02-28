@@ -6,7 +6,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: ActorView
+  m_Name: Actor_AC
   serializedVersion: 5
   m_AnimatorParameters: []
   m_AnimatorLayers:
@@ -42,7 +42,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 7128c5e34379f4889b7b0862c4ff2d25, type: 2}
+  m_Motion: {fileID: 7400000, guid: 611959f573986d24598fda60f6da7384, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

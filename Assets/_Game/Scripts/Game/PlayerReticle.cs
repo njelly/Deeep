@@ -1,12 +1,12 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  PlayerActorView (c) 2020 Tofunaut
+//  PlayerReticle (c) 2020 Tofunaut
 //
 //  Created by Nathaniel Ellingson for Deeep on 02/27/2020
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-using System;
+using System.Collections;
 using Tofunaut.Animation;
 using Tofunaut.UnityUtils;
 using UnityEngine;
@@ -17,14 +17,14 @@ namespace Tofunaut.Deeep.Game
     public class PlayerReticle : MonoBehaviour
     {
         private const float ReticleMoveAnimTime = 0.1f;
-        private const float ReticleFlashAnimTime = 0.4f;
+        private const float ReticleFlashAnimTime = 0.2f;
 
         [SerializeField] private SpriteRenderer _spriteRenderer;
 
         public Color CurrentColor => _currentReticleColor;
 
-        private TofuAnimation _reticleMoveAnimation;
-        private TofuAnimation _reticleFlashAnimation;
+        private Coroutine _reticleMoveAnimation;
+        private Coroutine _reticleFlashAnimation;
         private Color _defaultReticleColor;
         private Color _currentReticleColor;
 
@@ -47,8 +47,6 @@ namespace Tofunaut.Deeep.Game
 
             _previousInteractOffset = interactOffset;
 
-            _reticleMoveAnimation?.Stop();
-
             float fromAngle = Mathf.Atan2(_spriteRenderer.transform.localPosition.x, -_spriteRenderer.transform.localPosition.y) - Mathf.PI / 2f;
             float toAngle = Mathf.Atan2(interactOffset.x, -interactOffset.y) - Mathf.PI / 2f;
 
@@ -61,13 +59,27 @@ namespace Tofunaut.Deeep.Game
                 fromAngle -= Mathf.PI * 2f;
             }
 
-            _reticleMoveAnimation = new TofuAnimation()
-                .Value01(ReticleMoveAnimTime, EEaseType.Linear, (float newValue) =>
-                {
-                    float angle = Mathf.LerpUnclamped(fromAngle, toAngle, newValue);
-                    _spriteRenderer.transform.localPosition = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f);
-                })
-                .Play();
+            if (_reticleMoveAnimation != null)
+            {
+                StopCoroutine(_reticleMoveAnimation);
+            }
+            _reticleMoveAnimation = StartCoroutine(AnimateReticleMoveCoroutine(fromAngle, toAngle));
+        }
+
+        // --------------------------------------------------------------------------------------------s
+        private IEnumerator AnimateReticleMoveCoroutine(float fromAngle, float toAngle)
+        {
+            float timer = 0f;
+            while(timer < ReticleMoveAnimTime)
+            {
+                timer = Mathf.Clamp(timer + Time.deltaTime, 0f, ReticleMoveAnimTime);
+                float angle = Mathf.LerpUnclamped(fromAngle, toAngle, timer / ReticleMoveAnimTime);
+                _spriteRenderer.transform.localPosition = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f);
+
+                yield return null;
+            }
+
+            _reticleMoveAnimation = null;
         }
 
         // --------------------------------------------------------------------------------------------
@@ -81,18 +93,26 @@ namespace Tofunaut.Deeep.Game
         {
             _currentReticleColor = new Color(flashColor.r, flashColor.g, flashColor.b, _defaultReticleColor.a);
 
-            _reticleFlashAnimation?.Stop();
-            _reticleFlashAnimation = new TofuAnimation()
-                .Value01(ReticleFlashAnimTime, EEaseType.EaseOutExpo, (float newValue) =>
-                {
-                    _spriteRenderer.color = Color.LerpUnclamped(_currentReticleColor, flashColor, newValue);
-                })
-                .Then()
-                .Execute(() =>
-                {
-                    _reticleFlashAnimation = null;
-                })
-                .Play();
+            if(_reticleFlashAnimation != null)
+            {
+                StopCoroutine(_reticleFlashAnimation);
+            }
+            _reticleFlashAnimation = StartCoroutine(AnimateReticleColorCoroutine(_currentReticleColor, flashColor));
+        }
+
+        // --------------------------------------------------------------------------------------------
+        private IEnumerator AnimateReticleColorCoroutine(Color from, Color to)
+        {
+            float timer = 0f;
+            while (timer < ReticleFlashAnimTime)
+            {
+                timer = Mathf.Clamp(timer + Time.deltaTime, 0f, ReticleFlashAnimTime);
+                _spriteRenderer.color = Color.LerpUnclamped(from, to, TofuAnimation.Evaluate01(EEaseType.EaseOutExpo, timer / ReticleFlashAnimTime));
+
+                yield return null;
+            }
+
+            _reticleFlashAnimation = null;
         }
     }
 }

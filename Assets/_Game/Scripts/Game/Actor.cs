@@ -59,7 +59,17 @@ namespace Tofunaut.Deeep.Game
         }
 
         // --------------------------------------------------------------------------------------------
-        protected virtual void Interact() { }
+        protected virtual void Interact() 
+        {
+            foreach(Collider2D collider in Physics2D.OverlapCircleAll(_targetPosition.Vector2_XY() + _interactOffset, 0.4f))
+            {
+                Interactable interactable = collider.GetComponent<Interactable>();
+                if (interactable)
+                {
+                    interactable.Interact(this);
+                }
+            }
+        }
 
         // --------------------------------------------------------------------------------------------
         protected virtual void UpdateMovement()
@@ -82,6 +92,7 @@ namespace Tofunaut.Deeep.Game
             }
             if (reachedDestination)
             {
+                Vector3 previousTarget = _targetPosition;
                 if (_input.up)
                 {
                     _interactOffset = Vector3.up;
@@ -117,7 +128,14 @@ namespace Tofunaut.Deeep.Game
                     }
                 }
 
-                nextPosition += (_targetPosition - nextPosition).normalized * stutterFix;
+                if(!_targetPosition.IsApproximately(previousTarget) && CanMoveToTargetPosition())
+                {
+                    nextPosition += (_targetPosition - nextPosition).normalized * stutterFix;
+                }
+                else
+                {
+                    _targetPosition = previousTarget;
+                }
             }
 
             transform.localPosition = nextPosition;
@@ -125,6 +143,12 @@ namespace Tofunaut.Deeep.Game
 
         // --------------------------------------------------------------------------------------------
         protected abstract void UpdateInput();
+
+        // --------------------------------------------------------------------------------------------
+        protected virtual bool CanMoveToTargetPosition()
+        {
+            return Physics2D.OverlapCircleAll(_targetPosition.Vector2_XY(), 0.4f, LayerMask.GetMask("Blocking", "Actor")).Length == 0;
+        }
     }
 
     // --------------------------------------------------------------------------------------------
