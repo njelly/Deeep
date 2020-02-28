@@ -7,64 +7,45 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 using System;
-using TofuCore;
-using Tofunaut.SharpUnity;
 using Tofunaut.UnityUtils;
 using UnityEngine;
 
 namespace Tofunaut.Deeep.Game
 {
     // --------------------------------------------------------------------------------------------
-    public abstract class Actor : SharpGameObject, Updater.IUpdateable
+    public abstract class Actor : MonoBehaviour
     {
-        public event EventHandler OnInteract;
-
-        public Vector3 TilePosition => new Vector3(Mathf.RoundToInt(Transform.localPosition.x), Mathf.RoundToInt(Transform.localPosition.y));
+        public Vector3 TilePosition => new Vector3(Mathf.RoundToInt(transform.localPosition.x), Mathf.RoundToInt(transform.localPosition.y));
         public ActorInput Input => _input;
-        public Vector3 InteractOffset { get; private set; }
-
 
         private const float MoveButtonHoldTimeThreshold = 0.08f;
 
-        private readonly string _prefabPath;
+        [Header("Components")]
+        [SerializeField] protected SpriteRenderer _spriteRenderer;
+        [SerializeField] protected Animator _animator;
+        [SerializeField] protected AnimatorOverrideController _overrideController;
 
-        protected ActorView _actorView;
+        [Header("Actor")]
+        [SerializeField] protected float _moveSpeed;
+
         protected ActorInput _input;
         protected Vector3 _targetPosition;
+        protected Vector2 _interactOffset;
 
         // --------------------------------------------------------------------------------------------
-        protected Actor(string name, string prefabPath) : base(name)
+        protected virtual void Start()
         {
-            _prefabPath = prefabPath;
             _input = new ActorInput();
-        }
+            _targetPosition = transform.localPosition;
 
-        // --------------------------------------------------------------------------------------------
-        protected override void Build()
-        {
-            Updater.Instance.Add(this);
-
-            _targetPosition = Transform.position;
-
-            ActorView.Load(_prefabPath, this, (ActorView actorView) =>
+            if(_overrideController != null)
             {
-                _actorView = actorView;
-            });
-        }
-
-        // --------------------------------------------------------------------------------------------
-        public override void Destroy()
-        {
-            base.Destroy();
-
-            if (Updater.HasInstance)
-            {
-                Updater.Instance.Remove(this);
+                _animator.runtimeAnimatorController = _overrideController;
             }
         }
 
         // --------------------------------------------------------------------------------------------
-        public virtual void Update(float deltaTime)
+        protected virtual void Update()
         {
             UpdateInput();
 
@@ -78,27 +59,24 @@ namespace Tofunaut.Deeep.Game
         }
 
         // --------------------------------------------------------------------------------------------
-        protected virtual void Interact()
-        {
-            OnInteract?.Invoke(this, EventArgs.Empty);
-        }
+        protected virtual void Interact() { }
 
         // --------------------------------------------------------------------------------------------
         protected virtual void UpdateMovement()
         {
             // Grid based movement!
-            bool reachedDestination = Transform.localPosition.IsApproximately(_targetPosition);
-            Vector3 nextPosition = Transform.localPosition;
+            bool reachedDestination = transform.localPosition.IsApproximately(_targetPosition);
+            Vector3 nextPosition = transform.localPosition;
             float stutterFix = 0f;
             if (!reachedDestination)
             {
-                float moveDelta = 5f * Time.deltaTime;
-                nextPosition = Vector3.MoveTowards(Transform.localPosition, _targetPosition, moveDelta);
+                float moveDelta = _moveSpeed * Time.deltaTime;
+                nextPosition = Vector3.MoveTowards(transform.localPosition, _targetPosition, moveDelta);
 
                 reachedDestination = nextPosition.IsApproximately(_targetPosition);
                 if (reachedDestination)
                 {
-                    Vector3 toNext = nextPosition - Transform.localPosition;
+                    Vector3 toNext = nextPosition - transform.localPosition;
                     stutterFix = moveDelta - toNext.magnitude;
                 }
             }
@@ -106,7 +84,7 @@ namespace Tofunaut.Deeep.Game
             {
                 if (_input.up)
                 {
-                    InteractOffset = Vector3.up;
+                    _interactOffset = Vector3.up;
                     if (!_input.shift && _input.up.timeDown > MoveButtonHoldTimeThreshold)
                     {
                         _targetPosition += Vector3.up;
@@ -114,7 +92,7 @@ namespace Tofunaut.Deeep.Game
                 }
                 else if (_input.down)
                 {
-                    InteractOffset = Vector3.down;
+                    _interactOffset = Vector3.down;
                     if (!_input.shift && _input.down.timeDown > MoveButtonHoldTimeThreshold)
                     {
                         _targetPosition += Vector3.down;
@@ -122,8 +100,8 @@ namespace Tofunaut.Deeep.Game
                 }
                 else if (_input.left)
                 {
-                    InteractOffset = Vector3.left;
-                    _actorView.SpriteRendererGameObject.transform.localScale = new Vector3(-1f, 1f, 1f);
+                    _interactOffset = Vector3.left;
+                    _spriteRenderer.flipX = true;
                     if (!_input.shift && _input.left.timeDown > MoveButtonHoldTimeThreshold)
                     {
                         _targetPosition += Vector3.left;
@@ -131,8 +109,8 @@ namespace Tofunaut.Deeep.Game
                 }
                 else if (_input.right)
                 {
-                    InteractOffset = Vector3.right;
-                    _actorView.SpriteRendererGameObject.transform.localScale = new Vector3(1f, 1f, 1f);
+                    _interactOffset = Vector3.right;
+                    _spriteRenderer.flipX = false;
                     if (!_input.shift && _input.right.timeDown > MoveButtonHoldTimeThreshold)
                     {
                         _targetPosition += Vector3.right;
@@ -142,7 +120,7 @@ namespace Tofunaut.Deeep.Game
                 nextPosition += (_targetPosition - nextPosition).normalized * stutterFix;
             }
 
-            Transform.localPosition = nextPosition;
+            transform.localPosition = nextPosition;
         }
 
         // --------------------------------------------------------------------------------------------

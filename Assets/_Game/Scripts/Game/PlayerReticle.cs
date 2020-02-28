@@ -14,13 +14,14 @@ using UnityEngine;
 namespace Tofunaut.Deeep.Game
 {
     // --------------------------------------------------------------------------------------------
-    public class PlayerActorView : ActorView
+    public class PlayerReticle : MonoBehaviour
     {
         private const float ReticleMoveAnimTime = 0.1f;
         private const float ReticleFlashAnimTime = 0.4f;
 
-        [Header("Player")]
-        [SerializeField] private SpriteRenderer _interactReticle;
+        [SerializeField] private SpriteRenderer _spriteRenderer;
+
+        public Color CurrentColor => _currentReticleColor;
 
         private TofuAnimation _reticleMoveAnimation;
         private TofuAnimation _reticleFlashAnimation;
@@ -30,44 +31,25 @@ namespace Tofunaut.Deeep.Game
         private Vector3 _previousInteractOffset;
 
         // --------------------------------------------------------------------------------------------
-        protected override void Start()
+        private void Start()
         {
-            base.Start();
-
-            _defaultReticleColor = _interactReticle.color;
+            _defaultReticleColor = _spriteRenderer.color;
             _currentReticleColor = _defaultReticleColor;
-        }
-
-        // --------------------------------------------------------------------------------------------
-        private void Update()
-        {
-            if(_actor == null)
-            {
-                return;
-            }
-
-            if (_actor.Input.space.Pressed)
-            {
-                AnimateInteractReticleColor();
-            }
-            else if(_actor.Input.space.Released)
-            {
-                AnimateInteractReticleColor(_currentReticleColor);
-            }
-
-            if (!_previousInteractOffset.IsApproximately(_actor.InteractOffset))
-            {
-                AnimateInteractReticleMove(_actor.InteractOffset);
-                _previousInteractOffset = _actor.InteractOffset;
-            }
         }
 
         // --------------------------------------------------------------------------------------------
         public void AnimateInteractReticleMove(Vector3 interactOffset)
         {
+            if(_previousInteractOffset.IsApproximately(interactOffset))
+            {
+                return;
+            }
+
+            _previousInteractOffset = interactOffset;
+
             _reticleMoveAnimation?.Stop();
 
-            float fromAngle = Mathf.Atan2(_interactReticle.transform.localPosition.x, -_interactReticle.transform.localPosition.y) - Mathf.PI / 2f;
+            float fromAngle = Mathf.Atan2(_spriteRenderer.transform.localPosition.x, -_spriteRenderer.transform.localPosition.y) - Mathf.PI / 2f;
             float toAngle = Mathf.Atan2(interactOffset.x, -interactOffset.y) - Mathf.PI / 2f;
 
             if (toAngle - fromAngle > Mathf.PI)
@@ -83,19 +65,19 @@ namespace Tofunaut.Deeep.Game
                 .Value01(ReticleMoveAnimTime, EEaseType.Linear, (float newValue) =>
                 {
                     float angle = Mathf.LerpUnclamped(fromAngle, toAngle, newValue);
-                    _interactReticle.transform.localPosition = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f);
+                    _spriteRenderer.transform.localPosition = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f);
                 })
                 .Play();
         }
 
         // --------------------------------------------------------------------------------------------
-        private void AnimateInteractReticleColor()
+        public void AnimateInteractReticleColor()
         {
-            _interactReticle.color = _currentReticleColor;
+            _spriteRenderer.color = _currentReticleColor;
             AnimateInteractReticleColor(1f);
         }
-        private void AnimateInteractReticleColor(float alpha) => AnimateInteractReticleColor(new Color(_currentReticleColor.r, _currentReticleColor.g, _currentReticleColor.b, alpha));
-        private void AnimateInteractReticleColor(Color flashColor)
+        public void AnimateInteractReticleColor(float alpha) => AnimateInteractReticleColor(new Color(_currentReticleColor.r, _currentReticleColor.g, _currentReticleColor.b, alpha));
+        public void AnimateInteractReticleColor(Color flashColor)
         {
             _currentReticleColor = new Color(flashColor.r, flashColor.g, flashColor.b, _defaultReticleColor.a);
 
@@ -103,7 +85,7 @@ namespace Tofunaut.Deeep.Game
             _reticleFlashAnimation = new TofuAnimation()
                 .Value01(ReticleFlashAnimTime, EEaseType.EaseOutExpo, (float newValue) =>
                 {
-                    _interactReticle.color = Color.LerpUnclamped(_currentReticleColor, flashColor, newValue);
+                    _spriteRenderer.color = Color.LerpUnclamped(_currentReticleColor, flashColor, newValue);
                 })
                 .Then()
                 .Execute(() =>
@@ -111,12 +93,6 @@ namespace Tofunaut.Deeep.Game
                     _reticleFlashAnimation = null;
                 })
                 .Play();
-        }
-
-        // --------------------------------------------------------------------------------------------
-        private void Actor_OnInteract(object sender, EventArgs e)
-        {
-
         }
     }
 }

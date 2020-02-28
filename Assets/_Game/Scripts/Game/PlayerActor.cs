@@ -14,10 +14,24 @@ namespace Tofunaut.Deeep.Game
     // --------------------------------------------------------------------------------------------
     public class PlayerActor : Actor
     {
+        [Header("Player")]
+        [SerializeField] protected PlayerReticle _playerReticle;
 
-        // --------------------------------------------------------------------------------------------
-        public PlayerActor() : base ("PlayerActor", AssetPaths.Prefabs.PlayerActorView) { }
+        protected override void Update()
+        {
+            base.Update();
 
+            if (_input.space.Pressed)
+            {
+                _playerReticle.AnimateInteractReticleColor();
+            }
+            else if (_input.space.Released)
+            {
+                _playerReticle.AnimateInteractReticleColor(_playerReticle.CurrentColor);
+            }
+
+            _playerReticle.AnimateInteractReticleMove(_interactOffset);
+        }
 
         // --------------------------------------------------------------------------------------------
         protected override void UpdateInput()
