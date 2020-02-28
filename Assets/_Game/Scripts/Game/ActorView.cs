@@ -6,6 +6,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
+using System;
 using UnityEngine;
 
 namespace Tofunaut.Deeep.Game
@@ -17,6 +18,10 @@ namespace Tofunaut.Deeep.Game
         [SerializeField] protected Animator _animator;
         [SerializeField] protected AnimatorOverrideController _overrideController;
 
+        public GameObject SpriteRendererGameObject => _spriteRenderer.gameObject;
+
+        protected Actor _actor;
+
         // --------------------------------------------------------------------------------------------
         protected virtual void Start()
         {
@@ -24,6 +29,22 @@ namespace Tofunaut.Deeep.Game
             {
                 _animator.runtimeAnimatorController = _overrideController;
             }
+        }
+
+        // --------------------------------------------------------------------------------------------
+        public static void Load(string prefabPath, Actor actor, Action<ActorView> callback)
+        {
+            AppManager.AssetManager.Load(prefabPath, (bool succesfull, GameObject payload) =>
+            {
+                if (succesfull)
+                {
+                    GameObject instantiatedPayload = Instantiate(payload, actor.Transform, false);
+                    ActorView actorView = instantiatedPayload.GetComponent<ActorView>();
+                    actorView._actor = actor;
+
+                    callback(actorView);
+                }
+            });
         }
     }
 }

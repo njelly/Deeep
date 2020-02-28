@@ -722,8 +722,8 @@ TextureImporter:
       name: sprite_atlas_18
       rect:
         serializedVersion: 2
-        x: 0
-        y: 496
+        x: 144
+        y: 504
         width: 8
         height: 8
       alignment: 0
@@ -743,7 +743,7 @@ TextureImporter:
       name: sprite_atlas_19
       rect:
         serializedVersion: 2
-        x: 8
+        x: 0
         y: 496
         width: 8
         height: 8
@@ -764,7 +764,7 @@ TextureImporter:
       name: sprite_atlas_20
       rect:
         serializedVersion: 2
-        x: 16
+        x: 8
         y: 496
         width: 8
         height: 8
@@ -785,7 +785,7 @@ TextureImporter:
       name: sprite_atlas_21
       rect:
         serializedVersion: 2
-        x: 24
+        x: 16
         y: 496
         width: 8
         height: 8
@@ -806,8 +806,8 @@ TextureImporter:
       name: sprite_atlas_22
       rect:
         serializedVersion: 2
-        x: 0
-        y: 488
+        x: 24
+        y: 496
         width: 8
         height: 8
       alignment: 0
@@ -827,7 +827,7 @@ TextureImporter:
       name: sprite_atlas_23
       rect:
         serializedVersion: 2
-        x: 8
+        x: 0
         y: 488
         width: 8
         height: 8
@@ -848,7 +848,7 @@ TextureImporter:
       name: sprite_atlas_24
       rect:
         serializedVersion: 2
-        x: 16
+        x: 8
         y: 488
         width: 8
         height: 8
@@ -869,7 +869,7 @@ TextureImporter:
       name: sprite_atlas_25
       rect:
         serializedVersion: 2
-        x: 24
+        x: 16
         y: 488
         width: 8
         height: 8
@@ -890,8 +890,8 @@ TextureImporter:
       name: sprite_atlas_26
       rect:
         serializedVersion: 2
-        x: 0
-        y: 480
+        x: 24
+        y: 488
         width: 8
         height: 8
       alignment: 0
@@ -911,7 +911,7 @@ TextureImporter:
       name: sprite_atlas_27
       rect:
         serializedVersion: 2
-        x: 8
+        x: 0
         y: 480
         width: 8
         height: 8
@@ -932,7 +932,7 @@ TextureImporter:
       name: sprite_atlas_28
       rect:
         serializedVersion: 2
-        x: 16
+        x: 8
         y: 480
         width: 8
         height: 8
@@ -953,7 +953,7 @@ TextureImporter:
       name: sprite_atlas_29
       rect:
         serializedVersion: 2
-        x: 24
+        x: 16
         y: 480
         width: 8
         height: 8
@@ -974,8 +974,8 @@ TextureImporter:
       name: sprite_atlas_30
       rect:
         serializedVersion: 2
-        x: 0
-        y: 472
+        x: 24
+        y: 480
         width: 8
         height: 8
       alignment: 0
@@ -995,7 +995,7 @@ TextureImporter:
       name: sprite_atlas_31
       rect:
         serializedVersion: 2
-        x: 8
+        x: 0
         y: 472
         width: 8
         height: 8
@@ -1016,7 +1016,7 @@ TextureImporter:
       name: sprite_atlas_32
       rect:
         serializedVersion: 2
-        x: 16
+        x: 8
         y: 472
         width: 8
         height: 8
@@ -1037,8 +1037,8 @@ TextureImporter:
       name: sprite_atlas_33
       rect:
         serializedVersion: 2
-        x: 0
-        y: 464
+        x: 16
+        y: 472
         width: 8
         height: 8
       alignment: 0
@@ -1058,7 +1058,7 @@ TextureImporter:
       name: sprite_atlas_34
       rect:
         serializedVersion: 2
-        x: 8
+        x: 0
         y: 464
         width: 8
         height: 8
@@ -1079,7 +1079,7 @@ TextureImporter:
       name: sprite_atlas_35
       rect:
         serializedVersion: 2
-        x: 16
+        x: 8
         y: 464
         width: 8
         height: 8
@@ -1100,8 +1100,8 @@ TextureImporter:
       name: sprite_atlas_36
       rect:
         serializedVersion: 2
-        x: 0
-        y: 456
+        x: 16
+        y: 464
         width: 8
         height: 8
       alignment: 0
@@ -1121,7 +1121,7 @@ TextureImporter:
       name: sprite_atlas_37
       rect:
         serializedVersion: 2
-        x: 8
+        x: 0
         y: 456
         width: 8
         height: 8
@@ -1142,8 +1142,8 @@ TextureImporter:
       name: sprite_atlas_38
       rect:
         serializedVersion: 2
-        x: 0
-        y: 448
+        x: 8
+        y: 456
         width: 8
         height: 8
       alignment: 0
@@ -1163,7 +1163,7 @@ TextureImporter:
       name: sprite_atlas_39
       rect:
         serializedVersion: 2
-        x: 8
+        x: 0
         y: 448
         width: 8
         height: 8
@@ -1184,8 +1184,8 @@ TextureImporter:
       name: sprite_atlas_40
       rect:
         serializedVersion: 2
-        x: 0
-        y: 440
+        x: 8
+        y: 448
         width: 8
         height: 8
       alignment: 0
@@ -1205,7 +1205,7 @@ TextureImporter:
       name: sprite_atlas_41
       rect:
         serializedVersion: 2
-        x: 8
+        x: 0
         y: 440
         width: 8
         height: 8
@@ -1218,6 +1218,27 @@ TextureImporter:
       bones: []
       spriteID: 8ff16fa4648659740800000000000000
       internalID: 5158143599337414648
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprite_atlas_42
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 440
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4a7661e5a02a71730800000000000000
+      internalID: 3969819761962280868
       vertices: []
       indices: 
       edges: []
