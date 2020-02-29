@@ -17,9 +17,12 @@ namespace Tofunaut.Deeep.Game
         public string dialog;
 
         // --------------------------------------------------------------------------------------------
-        public override void Interact(Actor instigator)
+        public override void BeginInteract(Actor instigator)
         {
             Debug.Log(dialog);
         }
+
+        // --------------------------------------------------------------------------------------------
+        public override void EndInteract(Actor instigator) { }
     }
 }

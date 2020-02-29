@@ -17,6 +17,8 @@ namespace Tofunaut.Deeep.Game
         [Header("Player")]
         [SerializeField] protected PlayerReticle _playerReticle;
 
+        public PlayerReticle PlayerReticle => _playerReticle;
+
         protected override void Update()
         {
             base.Update();

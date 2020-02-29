@@ -14,6 +14,9 @@ namespace Tofunaut.Deeep.Game
     public abstract class Interactable : MonoBehaviour
     {
         // --------------------------------------------------------------------------------------------
-        public abstract void Interact(Actor instigator);
+        public abstract void BeginInteract(Actor instigator);
+
+        // --------------------------------------------------------------------------------------------
+        public abstract void EndInteract(Actor instigator);
     }
 }

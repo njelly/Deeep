@@ -15,9 +15,6 @@ namespace Tofunaut.Deeep.Game
     // --------------------------------------------------------------------------------------------
     public abstract class Actor : MonoBehaviour
     {
-        public Vector3 TilePosition => new Vector3(Mathf.RoundToInt(transform.localPosition.x), Mathf.RoundToInt(transform.localPosition.y));
-        public ActorInput Input => _input;
-
         private const float MoveButtonHoldTimeThreshold = 0.08f;
 
         [Header("Components")]
@@ -27,6 +24,11 @@ namespace Tofunaut.Deeep.Game
 
         [Header("Actor")]
         [SerializeField] protected float _moveSpeed;
+
+        public Vector3 TilePosition => new Vector3(Mathf.RoundToInt(transform.localPosition.x), Mathf.RoundToInt(transform.localPosition.y));
+        public ActorInput Input => _input;
+        public Vector3 TargetPosition => _targetPosition;
+        public Vector3 InteractOffset => _interactOffset;
 
         protected ActorInput _input;
         protected Vector3 _targetPosition;
@@ -54,19 +56,34 @@ namespace Tofunaut.Deeep.Game
             // try to interact
             if (_input.space.Pressed)
             {
-                Interact();
+                BeginInteract();
+            }
+            else if(_input.space.Released)
+            {
+                EndInteract();
             }
         }
 
         // --------------------------------------------------------------------------------------------
-        protected virtual void Interact() 
+        protected virtual void BeginInteract() 
         {
             foreach(Collider2D collider in Physics2D.OverlapCircleAll(_targetPosition.Vector2_XY() + _interactOffset, 0.4f))
             {
-                Interactable interactable = collider.GetComponent<Interactable>();
-                if (interactable)
+                foreach(Interactable interactable in collider.GetComponents<Interactable>())
                 {
-                    interactable.Interact(this);
+                    interactable.BeginInteract(this);
+                }
+            }
+        }
+
+        // --------------------------------------------------------------------------------------------
+        protected virtual void EndInteract()
+        {
+            foreach (Collider2D collider in Physics2D.OverlapCircleAll(_targetPosition.Vector2_XY() + _interactOffset, 0.4f))
+            {
+                foreach (Interactable interactable in collider.GetComponents<Interactable>())
+                {
+                    interactable.EndInteract(this);
                 }
             }
         }
