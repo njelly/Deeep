@@ -19,7 +19,7 @@ namespace Tofunaut.Deeep.Game
         // --------------------------------------------------------------------------------------------
         public override void BeginInteract(Actor instigator)
         {
-            Debug.Log(dialog);
+            HUDManager.HUDDialog.ShowDialog(dialog);
         }
 
         // --------------------------------------------------------------------------------------------

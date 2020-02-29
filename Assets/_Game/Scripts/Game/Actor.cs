@@ -170,6 +170,33 @@ namespace Tofunaut.Deeep.Game
     public class ActorInput
     {
         public ActorInputButton up, down, left, right, shift, space, one, two, three, four;
+
+        // --------------------------------------------------------------------------------------------
+        public static ActorInput PollPlayerInput(ActorInput input)
+        {
+            input.up.wasDown = input.up;
+            input.up.timeDown = (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W)) ? input.up.timeDown + Time.deltaTime : 0;
+            input.down.wasDown = input.down;
+            input.down.timeDown = (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S)) ? input.down.timeDown + Time.deltaTime : 0;
+            input.left.wasDown = input.left;
+            input.left.timeDown = (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) ? input.left.timeDown + Time.deltaTime : 0;
+            input.right.wasDown = input.right;
+            input.right.timeDown = (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D)) ? input.right.timeDown + Time.deltaTime : 0;
+            input.shift.wasDown = input.shift;
+            input.shift.timeDown = (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) ? input.shift.timeDown + Time.deltaTime : 0;
+            input.space.wasDown = input.space;
+            input.space.timeDown = Input.GetKey(KeyCode.Space) ? input.space.timeDown + Time.deltaTime : 0;
+            input.one.wasDown = input.one;
+            input.one.timeDown = Input.GetKey(KeyCode.Alpha1) ? input.one.timeDown + Time.deltaTime : 0;
+            input.two.wasDown = input.two;
+            input.two.timeDown = Input.GetKey(KeyCode.Alpha2) ? input.two.timeDown + Time.deltaTime : 0;
+            input.three.wasDown = input.three;
+            input.three.timeDown = Input.GetKey(KeyCode.Alpha3) ? input.three.timeDown + Time.deltaTime : 0;
+            input.four.wasDown = input.four;
+            input.four.timeDown = Input.GetKey(KeyCode.Alpha4) ? input.four.timeDown + Time.deltaTime : 0;
+
+            return input;
+        }
     }
 
     // --------------------------------------------------------------------------------------------
