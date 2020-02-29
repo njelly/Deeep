@@ -6,6 +6,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,11 +21,13 @@ namespace Tofunaut.Deeep.Game
         [SerializeField] private TMPro.TextMeshProUGUI _text;
         [SerializeField] private GameObject _mugshotContainer;
         [SerializeField] private Image _mugshot;
+        [SerializeField] private GameObject _nextPagePrompt;
 
         private string _dialog;
         private int _characterIndex;
         private float _typewriterTickTimer;
         private ActorInput _input;
+        private Action _completeCallback;
 
         // --------------------------------------------------------------------------------------------
         protected override void OnEnable()
@@ -34,7 +37,17 @@ namespace Tofunaut.Deeep.Game
             _characterIndex = 0;
             _typewriterTickTimer = typewriterTickTime;
             _text.text = string.Empty;
+            _text.pageToDisplay = 1;
             _input = new ActorInput();
+            _nextPagePrompt.SetActive(false);
+        }
+
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+
+            _completeCallback?.Invoke();
+            _completeCallback = null;
         }
 
         // --------------------------------------------------------------------------------------------
@@ -43,40 +56,63 @@ namespace Tofunaut.Deeep.Game
             _typewriterTickTimer -= Time.deltaTime;
             _input = ActorInput.PollPlayerInput(_input);
 
-            if (_typewriterTickTimer <= 0f)
+            if( _text.pageToDisplay < _text.textInfo.pageCount && _characterIndex >= _text.textInfo.pageInfo[_text.pageToDisplay - 1].lastCharacterIndex)
             {
-                bool keepGoing = _characterIndex < _text.textInfo.pageInfo[_text.pageToDisplay].lastCharacterIndex;
-                if(!keepGoing)
+                // there's more pages to go and we're at the end of the page
+                if(_input.space.Pressed)
                 {
-                    keepGoing = _input.space;
-                    if(keepGoing)
-                    {
-                        _text.pageToDisplay++;
-                    }
+                    _text.pageToDisplay++;
+                    _nextPagePrompt.SetActive(false);
+                } 
+                else if(!_nextPagePrompt.activeInHierarchy)
+                {
+                    _nextPagePrompt.SetActive(true);
+                }
+            }
+            else if(_typewriterTickTimer <= 0f)
+            {
+                _typewriterTickTimer = typewriterTickTime;
+                _characterIndex++;
+
+                string shownText = _dialog.Substring(0, Mathf.Min(_characterIndex + 1, _dialog.Length));
+                string hiddenText = _characterIndex + 1 < _dialog.Length ? _dialog.Substring(_characterIndex, _dialog.Length - _characterIndex) : string.Empty;
+
+                _text.text = $"<color=#FFFFFFFF>{shownText}</color><color=#FFFFFF00>{hiddenText}</color>";
+            }
+
+            if(_characterIndex >= _dialog.Length - 1)
+            {
+                if (!_nextPagePrompt.activeInHierarchy)
+                {
+                    _nextPagePrompt.SetActive(true);
                 }
 
-                if(keepGoing)
+                if (_input.space.Pressed)
                 {
-                    _typewriterTickTimer = typewriterTickTime;
-                    _characterIndex++;
-
-                    _text.text = $"<color=#FFFFFFFF>{_dialog.Substring(0, _characterIndex)}</color><color=#FFFFFF00>{_dialog.Substring(_characterIndex, _dialog.Length - _characterIndex)}</color>";
+                    gameObject.SetActive(false);
                 }
             }
         }
 
         // --------------------------------------------------------------------------------------------
-        public void ShowDialog(string dialog)
+        public void ShowDialog(string dialog) => ShowDialog(dialog, null);
+        public void ShowDialog(string dialog, Action completeCallback)
         {
-            _dialog = dialog;
+            // if the complete callback was previously set, invoke it now
+            _completeCallback?.Invoke();
+            _completeCallback = completeCallback;
 
+            _dialog = dialog;
             gameObject.SetActive(true);
         }
 
         // --------------------------------------------------------------------------------------------
-        public void SetMugshot(Sprite sprite)
+        public void ClearMugshot() => SetMugshot(null);
+        public void SetMugshot(Sprite sprite) => SetMugshot(sprite, Color.white);
+        public void SetMugshot(Sprite sprite, Color color)
         {
             _mugshot.sprite = sprite;
+            _mugshot.color = color;
             _mugshotContainer.SetActive(sprite != null);
         }
     }

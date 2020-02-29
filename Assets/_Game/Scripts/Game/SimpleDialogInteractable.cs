@@ -13,12 +13,13 @@ namespace Tofunaut.Deeep.Game
     // --------------------------------------------------------------------------------------------
     public class SimpleDialogInteractable : Interactable
     {
-        [TextArea]
-        public string dialog;
+        [SerializeField] private SpriteRenderer _spriteRender;
+        [TextArea] public string dialog;
 
         // --------------------------------------------------------------------------------------------
         public override void BeginInteract(Actor instigator)
         {
+            HUDManager.HUDDialog.SetMugshot(_spriteRender ? _spriteRender.sprite : null);
             HUDManager.HUDDialog.ShowDialog(dialog);
         }
 

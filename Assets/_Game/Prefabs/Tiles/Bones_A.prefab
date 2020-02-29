@@ -122,4 +122,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32e0e708d7f51514593195b9299bd3e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _spriteRender: {fileID: 613143116818784631}
   dialog: I wonder who left these...

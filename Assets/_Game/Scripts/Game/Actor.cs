@@ -50,40 +50,6 @@ namespace Tofunaut.Deeep.Game
             UpdateInput();
 
             UpdateMovement();
-
-            // try to interact
-            if (_input.space.Pressed)
-            {
-                BeginInteract();
-            }
-            else if(_input.space.Released)
-            {
-                EndInteract();
-            }
-        }
-
-        // --------------------------------------------------------------------------------------------
-        protected virtual void BeginInteract() 
-        {
-            foreach(Collider2D collider in Physics2D.OverlapCircleAll(_targetPosition + _interactOffset, 0.4f))
-            {
-                foreach(Interactable interactable in collider.GetComponents<Interactable>())
-                {
-                    interactable.BeginInteract(this);
-                }
-            }
-        }
-
-        // --------------------------------------------------------------------------------------------
-        protected virtual void EndInteract()
-        {
-            foreach (Collider2D collider in Physics2D.OverlapCircleAll(_targetPosition + _interactOffset, 0.4f))
-            {
-                foreach (Interactable interactable in collider.GetComponents<Interactable>())
-                {
-                    interactable.EndInteract(this);
-                }
-            }
         }
 
         // --------------------------------------------------------------------------------------------
@@ -110,7 +76,10 @@ namespace Tofunaut.Deeep.Game
                 Vector3 previousTarget = _targetPosition;
                 if (_input.up)
                 {
-                    _interactOffset = Vector3.up;
+                    if(CanTurnInteractOffset(Vector3.up))
+                    {
+                        _interactOffset = Vector3.up;
+                    }
                     if (!_input.shift && _input.up.timeDown > MoveButtonHoldTimeThreshold)
                     {
                         _targetPosition += Vector3.up;
@@ -118,7 +87,10 @@ namespace Tofunaut.Deeep.Game
                 }
                 else if (_input.down)
                 {
-                    _interactOffset = Vector3.down;
+                    if (CanTurnInteractOffset(Vector3.down))
+                    {
+                        _interactOffset = Vector3.down;
+                    }
                     if (!_input.shift && _input.down.timeDown > MoveButtonHoldTimeThreshold)
                     {
                         _targetPosition += Vector3.down;
@@ -126,8 +98,11 @@ namespace Tofunaut.Deeep.Game
                 }
                 else if (_input.left)
                 {
-                    _interactOffset = Vector3.left;
-                    _spriteRenderer.flipX = true;
+                    if (CanTurnInteractOffset(Vector3.left))
+                    {
+                        _interactOffset = Vector3.left;
+                        _spriteRenderer.flipX = true;
+                    }
                     if (!_input.shift && _input.left.timeDown > MoveButtonHoldTimeThreshold)
                     {
                         _targetPosition += Vector3.left;
@@ -135,8 +110,11 @@ namespace Tofunaut.Deeep.Game
                 }
                 else if (_input.right)
                 {
-                    _interactOffset = Vector3.right;
-                    _spriteRenderer.flipX = false;
+                    if (CanTurnInteractOffset(Vector3.right))
+                    {
+                        _interactOffset = Vector3.right;
+                        _spriteRenderer.flipX = false;
+                    }
                     if (!_input.shift && _input.right.timeDown > MoveButtonHoldTimeThreshold)
                     {
                         _targetPosition += Vector3.right;
@@ -163,6 +141,12 @@ namespace Tofunaut.Deeep.Game
         protected virtual bool CanMoveToTargetPosition()
         {
             return Physics2D.OverlapCircleAll(_targetPosition.Vector2_XY(), 0.4f, LayerMask.GetMask("Blocking", "Actor")).Length == 0;
+        }
+
+        // --------------------------------------------------------------------------------------------
+        protected virtual bool CanTurnInteractOffset(Vector3 potentialInteractOffset)
+        {
+            return true;
         }
     }
 
