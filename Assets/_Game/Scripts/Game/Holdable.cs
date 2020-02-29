@@ -15,8 +15,6 @@ namespace Tofunaut.Deeep.Game
     {
         public PlayerActor HeldBy { get; private set; }
 
-        private Transform _previousParent;
-
         // --------------------------------------------------------------------------------------------
         public override void BeginInteract(Actor instigator)
         {
@@ -31,23 +29,13 @@ namespace Tofunaut.Deeep.Game
             }
 
             HeldBy = instigator as PlayerActor;
-            _previousParent = transform.parent;
-            transform.SetParent(HeldBy.PlayerReticle.transform);
+            HeldBy.Hold(this);
         }
 
         // --------------------------------------------------------------------------------------------
         public override void EndInteract(Actor instigator) 
         {
-            if(_previousParent)
-            {
-                transform.SetParent(_previousParent);
-            }
-            else
-            {
-                transform.SetParent(null);
-            }
-
-            transform.position = HeldBy.TargetPosition + HeldBy.InteractOffset;
+            HeldBy.Hold(null);
             HeldBy = null;
         }
     }

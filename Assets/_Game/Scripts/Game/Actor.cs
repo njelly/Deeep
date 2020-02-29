@@ -27,12 +27,10 @@ namespace Tofunaut.Deeep.Game
 
         public Vector3 TilePosition => new Vector3(Mathf.RoundToInt(transform.localPosition.x), Mathf.RoundToInt(transform.localPosition.y));
         public ActorInput Input => _input;
-        public Vector3 TargetPosition => _targetPosition;
-        public Vector3 InteractOffset => _interactOffset;
 
         protected ActorInput _input;
         protected Vector3 _targetPosition;
-        protected Vector2 _interactOffset;
+        protected Vector3 _interactOffset;
 
         // --------------------------------------------------------------------------------------------
         protected virtual void Start()
@@ -67,7 +65,7 @@ namespace Tofunaut.Deeep.Game
         // --------------------------------------------------------------------------------------------
         protected virtual void BeginInteract() 
         {
-            foreach(Collider2D collider in Physics2D.OverlapCircleAll(_targetPosition.Vector2_XY() + _interactOffset, 0.4f))
+            foreach(Collider2D collider in Physics2D.OverlapCircleAll(_targetPosition + _interactOffset, 0.4f))
             {
                 foreach(Interactable interactable in collider.GetComponents<Interactable>())
                 {
@@ -79,7 +77,7 @@ namespace Tofunaut.Deeep.Game
         // --------------------------------------------------------------------------------------------
         protected virtual void EndInteract()
         {
-            foreach (Collider2D collider in Physics2D.OverlapCircleAll(_targetPosition.Vector2_XY() + _interactOffset, 0.4f))
+            foreach (Collider2D collider in Physics2D.OverlapCircleAll(_targetPosition + _interactOffset, 0.4f))
             {
                 foreach (Interactable interactable in collider.GetComponents<Interactable>())
                 {
