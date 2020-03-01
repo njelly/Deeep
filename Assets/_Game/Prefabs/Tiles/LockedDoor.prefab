@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6237120304343102747}
   - component: {fileID: 5941783972647573687}
   m_Layer: 8
-  m_Name: LockedDoor
+  m_Name: LockedDoor_LeftRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -50,7 +50,7 @@ MonoBehaviour:
   _overrideController: {fileID: 22100000, guid: 26996edbeb016bb42b56204f67351363,
     type: 2}
   _isOpen: 0
-  isUpDown: 1
+  isUpDown: 0
   key: {fileID: 0}
   lockedMessage: It's locked...
   needKeyToCloseMessage: Can't be locked without a key.
@@ -93,9 +93,9 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 4540126102806270782, guid: a357100fe40374b3889303e8a33c749b,
+  m_Sprite: {fileID: 1210211950641612236, guid: a357100fe40374b3889303e8a33c749b,
     type: 3}
-  m_Color: {r: 0.50980395, g: 0.50980395, b: 0.50980395, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

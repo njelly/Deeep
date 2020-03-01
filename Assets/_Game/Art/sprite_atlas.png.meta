@@ -281,6 +281,9 @@ TextureImporter:
   - first:
       213: 1210211950641612236
     second: sprite_atlas_50
+  - first:
+      213: -4449538126030497718
+    second: sprite_atlas_51
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -1377,7 +1380,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 144
-        y: 480
+        y: 496
         width: 8
         height: 8
       alignment: 0
@@ -1431,6 +1434,27 @@ TextureImporter:
       bones: []
       spriteID: cc50dec6b598bc010800000000000000
       internalID: 1210211950641612236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprite_atlas_51
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 480
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a48156726a01042c0800000000000000
+      internalID: -4449538126030497718
       vertices: []
       indices: 
       edges: []

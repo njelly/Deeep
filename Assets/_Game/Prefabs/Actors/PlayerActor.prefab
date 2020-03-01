@@ -51,6 +51,7 @@ MonoBehaviour:
   _spriteRenderer: {fileID: 7128360871445256075}
   _animator: {fileID: 5517177734069322150}
   _overrideController: {fileID: 0}
+  _collider: {fileID: 7389173610227185888}
   _inventory: {fileID: 2632920777391683228}
   _moveSpeed: 5
   _playerReticle: {fileID: 4661359272712939171}

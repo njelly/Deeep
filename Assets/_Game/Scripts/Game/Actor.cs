@@ -21,6 +21,7 @@ namespace Tofunaut.Deeep.Game
         [SerializeField] protected SpriteRenderer _spriteRenderer;
         [SerializeField] protected Animator _animator;
         [SerializeField] protected AnimatorOverrideController _overrideController;
+        [SerializeField] protected Collider2D _collider;
 
         [Header("Actor")]
         [SerializeField] protected Inventory _inventory;
@@ -50,6 +51,12 @@ namespace Tofunaut.Deeep.Game
         protected virtual void Update()
         {
             UpdateMovement();
+        }
+
+        // --------------------------------------------------------------------------------------------
+        protected virtual void LateUpdate()
+        {
+            _collider.offset = _targetPosition - transform.position;
         }
 
         // --------------------------------------------------------------------------------------------
