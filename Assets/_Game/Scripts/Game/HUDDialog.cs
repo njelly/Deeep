@@ -13,7 +13,7 @@ using UnityEngine.UI;
 namespace Tofunaut.Deeep.Game
 {
     // --------------------------------------------------------------------------------------------
-    public class HUDDialog : MonoBehaviour, PlayerInputManager.IReceiver
+    public class HUDDialog : MonoBehaviour, ActorInput.IReceiver
     {
         [Header("Dialog")]
         public float typewriterTickTime;

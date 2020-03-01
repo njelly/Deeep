@@ -12,7 +12,7 @@ using UnityEngine;
 namespace Tofunaut.Deeep.Game
 {
     // --------------------------------------------------------------------------------------------
-    public class PlayerActor : Actor, PlayerInputManager.IReceiver
+    public class PlayerActor : Actor, ActorInput.IReceiver
     {
         public static PlayerActor Instance { get; private set; }
 

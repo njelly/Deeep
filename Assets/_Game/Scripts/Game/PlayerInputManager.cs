@@ -14,18 +14,13 @@ namespace Tofunaut.Deeep.Game
 {
     public class PlayerInputManager : SingletonBehaviour<PlayerInputManager>
     {
-        public interface IReceiver
-        {
-            void ReceivePlayerInput(ActorInput input);
-        }
-
         protected override bool SetDontDestroyOnLoad { get { return true; } }
 
-        private HashSet<IReceiver> _receivers = new HashSet<IReceiver>();
+        private HashSet<ActorInput.IReceiver> _receivers = new HashSet<ActorInput.IReceiver>();
         private ActorInput _input = new ActorInput();
 
-        public static void Add(IReceiver receiver) => _instance?._receivers.Add(receiver);
-        public static void Remove(IReceiver receiver) 
+        public static void Add(ActorInput.IReceiver receiver) => _instance?._receivers.Add(receiver);
+        public static void Remove(ActorInput.IReceiver receiver) 
         {
             // clear the receiver's current input by sending an empty one
             receiver?.ReceivePlayerInput(new ActorInput());
@@ -35,7 +30,7 @@ namespace Tofunaut.Deeep.Game
         private void Update()
         {
             _input = ActorInput.PollPlayerInput(_input);
-            foreach (IReceiver receiver in _receivers)
+            foreach (ActorInput.IReceiver receiver in _receivers)
             {
                 receiver.ReceivePlayerInput(_input);
             }

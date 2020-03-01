@@ -157,6 +157,11 @@ namespace Tofunaut.Deeep.Game
     // --------------------------------------------------------------------------------------------
     public class ActorInput
     {
+        public interface IReceiver
+        {
+            void ReceivePlayerInput(ActorInput input);
+        }
+
         public ActorInputButton up, down, left, right, shift, space, one, two, three, four;
 
         // --------------------------------------------------------------------------------------------
