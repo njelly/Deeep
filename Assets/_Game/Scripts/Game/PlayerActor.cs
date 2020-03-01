@@ -6,6 +6,8 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
+using System;
+using Tofunaut.Animation;
 using Tofunaut.UnityUtils;
 using UnityEngine;
 
@@ -14,7 +16,21 @@ namespace Tofunaut.Deeep.Game
     // --------------------------------------------------------------------------------------------
     public class PlayerActor : Actor, ActorInput.IReceiver
     {
+        // --------------------------------------------------------------------------------------------
+        public enum EMoveMode
+        {
+            FreeMove,
+            Tactical,
+            Paused,
+        }
+
+        private const float TakeTurnCooldown = 1f;
+
+        public event EventHandler<MoveModeEventArgs> MoveModeChanged;
+        public event EventHandler TakeTacticalTurn;
+
         public static PlayerActor Instance { get; private set; }
+        public static EMoveMode MoveMode { get; private set; }
 
         [Header("Player")]
         [SerializeField] protected PlayerReticle _playerReticle;
@@ -22,6 +38,8 @@ namespace Tofunaut.Deeep.Game
         public Holdable Holding { get; private set; }
 
         private Transform _holdingPrevParent;
+        private bool _playerHasTakenTacticalTurn;
+        private TofuAnimation _tacticalTurnCooldownAnimation;
 
         // --------------------------------------------------------------------------------------------
         private void Awake()
@@ -34,6 +52,7 @@ namespace Tofunaut.Deeep.Game
             }
 
             Instance = this;
+            MoveMode = EMoveMode.FreeMove;
         }
 
         // --------------------------------------------------------------------------------------------
@@ -53,16 +72,28 @@ namespace Tofunaut.Deeep.Game
         {
             base.Update();
 
-            if (_input.space.Pressed)
+            _playerReticle.AnimateInteractReticleMove(_interactOffset);
+
+            if (MoveMode == EMoveMode.Tactical && _playerHasTakenTacticalTurn)
             {
-                _playerReticle.AnimateInteractReticleColor();
-            }
-            else if (_input.space.Released)
-            {
-                _playerReticle.AnimateInteractReticleColor(_playerReticle.CurrentColor);
+                if(_tacticalTurnCooldownAnimation == null)
+                {
+                    _tacticalTurnCooldownAnimation = new TofuAnimation()
+                        .Wait(TakeTurnCooldown)
+                        .Then()
+                        .Execute(() =>
+                        {
+                            TakeTacticalTurn?.Invoke(this, EventArgs.Empty);
+                            _playerHasTakenTacticalTurn = false;
+                            _tacticalTurnCooldownAnimation = null;
+                        })
+                        .Play();
+                }
+
+                return;
             }
 
-            _playerReticle.AnimateInteractReticleMove(_interactOffset);
+            _playerHasTakenTacticalTurn |= !transform.localPosition.IsApproximately(_targetPosition);
 
             // try to interact
             if (_input.space.Pressed)
@@ -73,11 +104,28 @@ namespace Tofunaut.Deeep.Game
             {
                 EndInteract();
             }
+
+            if(UnityEngine.Input.GetKeyDown(KeyCode.Tab))
+            {
+                if(MoveMode == EMoveMode.FreeMove)
+                {
+                    SetMoveMode(EMoveMode.Tactical);
+                }
+                else if(MoveMode == EMoveMode.Tactical)
+                {
+                    SetMoveMode(EMoveMode.FreeMove);
+                }
+            }
         }
 
         // --------------------------------------------------------------------------------------------
         protected override bool CanMoveToTargetPosition()
         {
+            if(MoveMode == EMoveMode.Tactical && _tacticalTurnCooldownAnimation != null)
+            {
+                return false;
+            }
+
             if (Holding)
             {
                 return Physics2D.OverlapCircleAll(_targetPosition + _interactOffset, 0.4f, LayerMask.GetMask("Blocking", "Actor")).Length == 0 && base.CanMoveToTargetPosition();
@@ -116,18 +164,26 @@ namespace Tofunaut.Deeep.Game
         // --------------------------------------------------------------------------------------------
         protected virtual void BeginInteract()
         {
+            _playerReticle.AnimateInteractReticleColor();
+
+            bool didInteract = false;
             foreach (Collider2D collider in Physics2D.OverlapCircleAll(_targetPosition + _interactOffset, 0.4f))
             {
                 foreach (Interactable interactable in collider.GetComponents<Interactable>())
                 {
                     interactable.BeginInteract(this);
+                    didInteract |= true;
                 }
             }
+
+            _playerHasTakenTacticalTurn |= didInteract;
         }
 
         // --------------------------------------------------------------------------------------------
         protected virtual void EndInteract()
         {
+            _playerReticle.AnimateInteractReticleColor(_playerReticle.CurrentColor);
+
             foreach (Collider2D collider in Physics2D.OverlapCircleAll(_targetPosition + _interactOffset, 0.4f))
             {
                 foreach (Interactable interactable in collider.GetComponents<Interactable>())
@@ -162,6 +218,35 @@ namespace Tofunaut.Deeep.Game
         public void ReceivePlayerInput(ActorInput input)
         {
             _input = input;
+        }
+
+        // --------------------------------------------------------------------------------------------
+        private void SetMoveMode(EMoveMode moveMode)
+        {
+            if(moveMode == MoveMode)
+            {
+                return;
+            }
+
+            EMoveMode previousMode = MoveMode;
+            MoveMode = moveMode;
+
+            _playerHasTakenTacticalTurn = false;
+
+            MoveModeChanged?.Invoke(this, new MoveModeEventArgs(previousMode, MoveMode));
+        }
+    }
+
+    // --------------------------------------------------------------------------------------------
+    public class MoveModeEventArgs : EventArgs
+    {
+        public readonly PlayerActor.EMoveMode previousMode;
+        public readonly PlayerActor.EMoveMode currentMode;
+
+        public MoveModeEventArgs(PlayerActor.EMoveMode previousMode, PlayerActor.EMoveMode currentMode)
+        {
+            this.previousMode = previousMode;
+            this.currentMode = currentMode;
         }
     }
 }
