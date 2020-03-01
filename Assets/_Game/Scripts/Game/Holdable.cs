@@ -16,6 +16,9 @@ namespace Tofunaut.Deeep.Game
         public PlayerActor HeldBy { get; private set; }
 
         // --------------------------------------------------------------------------------------------
+        public bool canHolderRotate = true;
+
+        // --------------------------------------------------------------------------------------------
         public override void BeginInteract(Actor instigator)
         {
             if(HeldBy != null)

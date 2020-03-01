@@ -11,7 +11,6 @@ namespace Tofunaut.Deeep.Game
     // --------------------------------------------------------------------------------------------
     public class NPCActor : Actor
     {
-        // --------------------------------------------------------------------------------------------
-        protected override void UpdateInput() { } // TODO: put a brain in here somehow
+        // TODO: some kind of AI should update the NPC's ActorInput
     }
 }

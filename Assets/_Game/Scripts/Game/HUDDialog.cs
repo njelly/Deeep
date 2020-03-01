@@ -13,7 +13,7 @@ using UnityEngine.UI;
 namespace Tofunaut.Deeep.Game
 {
     // --------------------------------------------------------------------------------------------
-    public class HUDDialog : HUDModule
+    public class HUDDialog : MonoBehaviour, PlayerInputManager.IReceiver
     {
         [Header("Dialog")]
         public float typewriterTickTime;
@@ -30,31 +30,33 @@ namespace Tofunaut.Deeep.Game
         private Action _completeCallback;
 
         // --------------------------------------------------------------------------------------------
-        protected override void OnEnable()
+        private void OnEnable()
         {
-            base.OnEnable();
-
             _characterIndex = 0;
             _typewriterTickTimer = typewriterTickTime;
             _text.text = string.Empty;
             _text.pageToDisplay = 1;
             _input = new ActorInput();
             _nextPagePrompt.SetActive(false);
+
+            PlayerInputManager.Add(this);
+            PlayerInputManager.Remove(PlayerActor.Instance);
         }
 
-        protected override void OnDisable()
+        // --------------------------------------------------------------------------------------------
+        private void OnDisable()
         {
-            base.OnDisable();
-
             _completeCallback?.Invoke();
             _completeCallback = null;
+
+            PlayerInputManager.Remove(this);
+            PlayerInputManager.Add(PlayerActor.Instance);
         }
 
         // --------------------------------------------------------------------------------------------
         private void Update()
         {
             _typewriterTickTimer -= Time.deltaTime;
-            _input = ActorInput.PollPlayerInput(_input);
 
             if( _text.pageToDisplay < _text.textInfo.pageCount && _characterIndex >= _text.textInfo.pageInfo[_text.pageToDisplay - 1].lastCharacterIndex)
             {
@@ -114,6 +116,12 @@ namespace Tofunaut.Deeep.Game
             _mugshot.sprite = sprite;
             _mugshot.color = color;
             _mugshotContainer.SetActive(sprite != null);
+        }
+
+        // --------------------------------------------------------------------------------------------
+        public void ReceivePlayerInput(ActorInput input)
+        {
+            _input = input;
         }
     }
 }

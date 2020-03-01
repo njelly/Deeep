@@ -23,8 +23,10 @@ namespace Tofunaut.Deeep.Game
         [SerializeField] protected AnimatorOverrideController _overrideController;
 
         [Header("Actor")]
+        [SerializeField] protected Inventory _inventory;
         [SerializeField] protected float _moveSpeed;
 
+        public Inventory Inventory => _inventory;
         public Vector3 TilePosition => new Vector3(Mathf.RoundToInt(transform.localPosition.x), Mathf.RoundToInt(transform.localPosition.y));
         public ActorInput Input => _input;
 
@@ -47,8 +49,6 @@ namespace Tofunaut.Deeep.Game
         // --------------------------------------------------------------------------------------------
         protected virtual void Update()
         {
-            UpdateInput();
-
             UpdateMovement();
         }
 
@@ -133,9 +133,6 @@ namespace Tofunaut.Deeep.Game
 
             transform.localPosition = nextPosition;
         }
-
-        // --------------------------------------------------------------------------------------------
-        protected abstract void UpdateInput();
 
         // --------------------------------------------------------------------------------------------
         protected virtual bool CanMoveToTargetPosition()

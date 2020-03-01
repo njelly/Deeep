@@ -12,8 +12,10 @@ using UnityEngine;
 namespace Tofunaut.Deeep.Game
 {
     // --------------------------------------------------------------------------------------------
-    public class PlayerActor : Actor
+    public class PlayerActor : Actor, PlayerInputManager.IReceiver
     {
+        public static PlayerActor Instance { get; private set; }
+
         [Header("Player")]
         [SerializeField] protected PlayerReticle _playerReticle;
 
@@ -22,48 +24,61 @@ namespace Tofunaut.Deeep.Game
         private Transform _holdingPrevParent;
 
         // --------------------------------------------------------------------------------------------
+        private void Awake()
+        {
+            if(Instance)
+            {
+                Debug.LogError("Only one PlayerActor can exist at a time!");
+                Destroy(gameObject);
+                return;
+            }
+
+            Instance = this;
+        }
+
+        // --------------------------------------------------------------------------------------------
+        private void OnEnable()
+        {
+            PlayerInputManager.Add(this);
+        }
+
+        // --------------------------------------------------------------------------------------------
+        private void OnDisable()
+        {
+            PlayerInputManager.Remove(this);
+        }
+
+        // --------------------------------------------------------------------------------------------
         protected override void Update()
         {
             base.Update();
 
-            if(!HUDModule.BlockPlayerInput)
+            if (_input.space.Pressed)
             {
-                if (_input.space.Pressed)
-                {
-                    _playerReticle.AnimateInteractReticleColor();
-                }
-                else if (_input.space.Released)
-                {
-                    _playerReticle.AnimateInteractReticleColor(_playerReticle.CurrentColor);
-                }
-
-                _playerReticle.AnimateInteractReticleMove(_interactOffset);
-
-                // try to interact
-                if (_input.space.Pressed)
-                {
-                    BeginInteract();
-                }
-                else if (_input.space.Released)
-                {
-                    EndInteract();
-                }
+                _playerReticle.AnimateInteractReticleColor();
             }
-        }
-
-        // --------------------------------------------------------------------------------------------
-        protected override void UpdateInput()
-        {
-            if(!HUDModule.BlockPlayerInput)
+            else if (_input.space.Released)
             {
-                _input = ActorInput.PollPlayerInput(_input);
+                _playerReticle.AnimateInteractReticleColor(_playerReticle.CurrentColor);
+            }
+
+            _playerReticle.AnimateInteractReticleMove(_interactOffset);
+
+            // try to interact
+            if (_input.space.Pressed)
+            {
+                BeginInteract();
+            }
+            else if (_input.space.Released)
+            {
+                EndInteract();
             }
         }
 
         // --------------------------------------------------------------------------------------------
         protected override bool CanMoveToTargetPosition()
         {
-            if(Holding)
+            if (Holding)
             {
                 return Physics2D.OverlapCircleAll(_targetPosition + _interactOffset, 0.4f, LayerMask.GetMask("Blocking", "Actor")).Length == 0 && base.CanMoveToTargetPosition();
             }
@@ -73,16 +88,24 @@ namespace Tofunaut.Deeep.Game
             }
         }
 
+        // --------------------------------------------------------------------------------------------
         protected override bool CanTurnInteractOffset(Vector3 potentialInteractOffset)
         {
-            if(Holding)
+            if (Holding)
             {
-                bool doesCollide = false;
-                foreach(Collider2D collider in Physics2D.OverlapCircleAll(_targetPosition + potentialInteractOffset, 0.4f))
+                if(Holding.canHolderRotate)
                 {
-                    doesCollide |= !Physics.GetIgnoreLayerCollision(collider.gameObject.layer, Holding.gameObject.layer);
+                    bool doesCollide = false;
+                    foreach (Collider2D collider in Physics2D.OverlapCircleAll(_targetPosition + potentialInteractOffset, 0.4f))
+                    {
+                        doesCollide |= !Physics.GetIgnoreLayerCollision(collider.gameObject.layer, Holding.gameObject.layer);
+                    }
+                    return !doesCollide;
                 }
-                return !doesCollide;
+                else
+                {
+                    return false;
+                }
             }
             else
             {
@@ -133,6 +156,12 @@ namespace Tofunaut.Deeep.Game
                 _holdingPrevParent = holdable.transform.parent;
                 Holding.transform.SetParent(_playerReticle.transform);
             }
+        }
+
+        // --------------------------------------------------------------------------------------------
+        public void ReceivePlayerInput(ActorInput input)
+        {
+            _input = input;
         }
     }
 }

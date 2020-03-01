@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6030721423178668346}
   - component: {fileID: 613143116818784631}
   - component: {fileID: 3672158017939377116}
-  - component: {fileID: 7360668771297963955}
+  - component: {fileID: 5492237332057275990}
   m_Layer: 10
   m_Name: Key
   m_TagString: Untagged
@@ -69,8 +69,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1359011721
+  m_SortingLayer: -1
   m_SortingOrder: 0
   m_Sprite: {fileID: -5475546600549633184, guid: a357100fe40374b3889303e8a33c749b,
     type: 3}
@@ -110,7 +110,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &7360668771297963955
+--- !u!114 &5492237332057275990
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -119,6 +119,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 3829006611025352586}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7634746e7ff60974bb728de6de17338b, type: 3}
+  m_Script: {fileID: 11500000, guid: f2c2932304fe89643abd7ad838a10c32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _spriteRenderer: {fileID: 613143116818784631}
+  weight: 0.1
+  goldValue: 0
+  door: {fileID: 0}
