@@ -74,6 +74,12 @@ namespace Tofunaut.Deeep.Game
 
             _playerReticle.AnimateInteractReticleMove(_interactOffset);
 
+            if (_input.space.Released)
+            {
+                // turn off the player reticle flash, this comes before the tactical check
+                _playerReticle.AnimateInteractReticleColor(_playerReticle.CurrentColor);
+            }
+
             if (MoveMode == EMoveMode.Tactical && _playerHasTakenTacticalTurn)
             {
                 if(_tacticalTurnCooldownAnimation == null)
@@ -93,6 +99,12 @@ namespace Tofunaut.Deeep.Game
                 return;
             }
 
+            if (_input.space.Pressed)
+            {
+                // turn on the player reticle flash
+                _playerReticle.AnimateInteractReticleColor();
+            }
+
             _playerHasTakenTacticalTurn |= !transform.localPosition.IsApproximately(_targetPosition);
 
             // try to interact
@@ -105,7 +117,7 @@ namespace Tofunaut.Deeep.Game
                 EndInteract();
             }
 
-            if(UnityEngine.Input.GetKeyDown(KeyCode.Tab))
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Tab))
             {
                 if(MoveMode == EMoveMode.FreeMove)
                 {
@@ -164,8 +176,6 @@ namespace Tofunaut.Deeep.Game
         // --------------------------------------------------------------------------------------------
         protected virtual void BeginInteract()
         {
-            _playerReticle.AnimateInteractReticleColor();
-
             bool didInteract = false;
             foreach (Collider2D collider in Physics2D.OverlapCircleAll(_targetPosition + _interactOffset, 0.4f))
             {
@@ -182,8 +192,6 @@ namespace Tofunaut.Deeep.Game
         // --------------------------------------------------------------------------------------------
         protected virtual void EndInteract()
         {
-            _playerReticle.AnimateInteractReticleColor(_playerReticle.CurrentColor);
-
             foreach (Collider2D collider in Physics2D.OverlapCircleAll(_targetPosition + _interactOffset, 0.4f))
             {
                 foreach (Interactable interactable in collider.GetComponents<Interactable>())
