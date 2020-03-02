@@ -33,6 +33,7 @@ namespace Tofunaut.Deeep.Game
 
         protected ActorInput _input;
         protected Vector3 _targetPosition;
+        protected Vector3 _previousPosition;
         protected Vector3 _interactOffset;
 
         // --------------------------------------------------------------------------------------------
@@ -50,101 +51,97 @@ namespace Tofunaut.Deeep.Game
         // --------------------------------------------------------------------------------------------
         protected virtual void Update()
         {
+            TryChooseNextTargetPosition();
+            TryMoveInteractOffset();
             UpdateMovement();
-        }
-
-        // --------------------------------------------------------------------------------------------
-        protected virtual void LateUpdate()
-        {
-            _collider.offset = _targetPosition - transform.position;
         }
 
         // --------------------------------------------------------------------------------------------
         protected virtual void UpdateMovement()
         {
-            // Grid based movement!
-            bool reachedDestination = transform.localPosition.IsApproximately(_targetPosition);
-            Vector3 nextPosition = transform.localPosition;
-            float stutterFix = 0f;
-            if (!reachedDestination)
-            {
-                float moveDelta = _moveSpeed * Time.deltaTime;
-                nextPosition = Vector3.MoveTowards(transform.localPosition, _targetPosition, moveDelta);
-
-                reachedDestination = nextPosition.IsApproximately(_targetPosition);
-                if (reachedDestination)
-                {
-                    Vector3 toNext = nextPosition - transform.localPosition;
-                    stutterFix = moveDelta - toNext.magnitude;
-                }
-            }
-            if (reachedDestination)
-            {
-                Vector3 previousTarget = _targetPosition;
-                if (_input.up)
-                {
-                    if(CanTurnInteractOffset(Vector3.up))
-                    {
-                        _interactOffset = Vector3.up;
-                    }
-                    if (!_input.shift && _input.up.timeDown > MoveButtonHoldTimeThreshold)
-                    {
-                        _targetPosition += Vector3.up;
-                    }
-                }
-                else if (_input.down)
-                {
-                    if (CanTurnInteractOffset(Vector3.down))
-                    {
-                        _interactOffset = Vector3.down;
-                    }
-                    if (!_input.shift && _input.down.timeDown > MoveButtonHoldTimeThreshold)
-                    {
-                        _targetPosition += Vector3.down;
-                    }
-                }
-                else if (_input.left)
-                {
-                    if (CanTurnInteractOffset(Vector3.left))
-                    {
-                        _interactOffset = Vector3.left;
-                        _spriteRenderer.flipX = true;
-                    }
-                    if (!_input.shift && _input.left.timeDown > MoveButtonHoldTimeThreshold)
-                    {
-                        _targetPosition += Vector3.left;
-                    }
-                }
-                else if (_input.right)
-                {
-                    if (CanTurnInteractOffset(Vector3.right))
-                    {
-                        _interactOffset = Vector3.right;
-                        _spriteRenderer.flipX = false;
-                    }
-                    if (!_input.shift && _input.right.timeDown > MoveButtonHoldTimeThreshold)
-                    {
-                        _targetPosition += Vector3.right;
-                    }
-                }
-
-                if(!_targetPosition.IsApproximately(previousTarget) && CanMoveToTargetPosition())
-                {
-                    nextPosition += (_targetPosition - nextPosition).normalized * stutterFix;
-                }
-                else
-                {
-                    _targetPosition = previousTarget;
-                }
-            }
-
-            transform.localPosition = nextPosition;
+            _previousPosition = transform.localPosition;
+            transform.localPosition = Vector3.MoveTowards(transform.localPosition, _targetPosition, _moveSpeed * Time.deltaTime);
+            _collider.offset = _targetPosition - transform.position;
         }
 
         // --------------------------------------------------------------------------------------------
-        protected virtual bool CanMoveToTargetPosition()
+        protected virtual void TryChooseNextTargetPosition()
         {
-            return Physics2D.OverlapCircleAll(_targetPosition.Vector2_XY(), 0.4f, LayerMask.GetMask("Blocking", "Actor")).Length == 0;
+            if(_input.shift)
+            {
+                // the Shift key makes sure the actor stays in place
+                return;
+            }
+
+            if (!_targetPosition.IsApproximately(transform.localPosition))
+            {
+                // wait until we've reached our current target before choosing the next target
+                return;
+            }
+
+            // poll our inputs
+            Vector3 potentialTargetPos = _targetPosition;
+            if(_input.up.timeDown > MoveButtonHoldTimeThreshold)
+            {
+                potentialTargetPos += Vector3.up;
+            }
+            else if(_input.down.timeDown > MoveButtonHoldTimeThreshold)
+            {
+                potentialTargetPos += Vector3.down;
+            }
+            else if (_input.left.timeDown > MoveButtonHoldTimeThreshold)
+            {
+                potentialTargetPos += Vector3.left;
+            }
+            else if (_input.right.timeDown > MoveButtonHoldTimeThreshold)
+            {
+                potentialTargetPos += Vector3.right;
+            }
+
+            if(!CanOccupyPosition(potentialTargetPos))
+            {
+                // we can't move there, return
+                return;
+            }
+
+            if(!_previousPosition.IsApproximately(transform.localPosition))
+            {
+                // compensate for stutter if we are continuously moving
+                float amountWouldHaveMoved = _moveSpeed * Time.deltaTime - (_previousPosition - transform.localPosition).magnitude;
+                Vector3 stutterFix = (potentialTargetPos - transform.localPosition).normalized * amountWouldHaveMoved;
+                transform.localPosition += stutterFix;
+            }
+
+            _targetPosition = potentialTargetPos;
+        }
+
+        // --------------------------------------------------------------------------------------------
+        protected virtual void TryMoveInteractOffset()
+        {
+            if (_input.up && CanTurnInteractOffset(Vector3.up))
+            {
+                _interactOffset = Vector3.up;
+            }
+            else if (_input.down && CanTurnInteractOffset(Vector3.down))
+            {
+                _interactOffset = Vector3.down;
+            }
+            else if (_input.left && CanTurnInteractOffset(Vector3.left))
+            {
+                _interactOffset = Vector3.left;
+                _spriteRenderer.flipX = true;
+            }
+            else if (_input.right && CanTurnInteractOffset(Vector3.right))
+            {
+                _interactOffset = Vector3.right;
+                _spriteRenderer.flipX = false;
+            }
+        }
+
+        // --------------------------------------------------------------------------------------------
+        protected virtual bool CanOccupyPosition(Vector3 position)
+        {
+            return Physics2D.OverlapCircleAll(position.Vector2_XY(), 0.4f, LayerMask.GetMask("Blocking", "Actor")).Length == 0;
         }
 
         // --------------------------------------------------------------------------------------------
@@ -152,6 +149,7 @@ namespace Tofunaut.Deeep.Game
         {
             return true;
         }
+
     }
 
     // --------------------------------------------------------------------------------------------

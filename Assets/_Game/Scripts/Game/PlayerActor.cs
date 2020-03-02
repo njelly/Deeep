@@ -131,7 +131,7 @@ namespace Tofunaut.Deeep.Game
         }
 
         // --------------------------------------------------------------------------------------------
-        protected override bool CanMoveToTargetPosition()
+        protected override bool CanOccupyPosition(Vector3 position)
         {
             if(MoveMode == EMoveMode.Tactical && _tacticalTurnCooldownAnimation != null)
             {
@@ -140,11 +140,11 @@ namespace Tofunaut.Deeep.Game
 
             if (Holding)
             {
-                return Physics2D.OverlapCircleAll(_targetPosition + _interactOffset, 0.4f, LayerMask.GetMask("Blocking", "Actor")).Length == 0 && base.CanMoveToTargetPosition();
+                return Physics2D.OverlapCircleAll(position + _interactOffset, 0.4f, LayerMask.GetMask("Blocking", "Actor")).Length == 0 && base.CanOccupyPosition(position);
             }
             else
             {
-                return base.CanMoveToTargetPosition();
+                return base.CanOccupyPosition(position);
             }
         }
 
