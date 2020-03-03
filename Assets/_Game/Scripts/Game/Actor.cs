@@ -13,7 +13,7 @@ using UnityEngine;
 namespace Tofunaut.Deeep.Game
 {
     // --------------------------------------------------------------------------------------------
-    public abstract class Actor : MonoBehaviour
+    public abstract class Actor : MonoBehaviour, ActorInput.IReceiver
     {
         private const float MoveButtonHoldTimeThreshold = 0.08f;
 
@@ -35,6 +35,7 @@ namespace Tofunaut.Deeep.Game
         protected Vector3 _targetPosition;
         protected Vector3 _previousPosition;
         protected Vector3 _interactOffset;
+        protected Collider2D[] _facingColliders;
 
         // --------------------------------------------------------------------------------------------
         protected virtual void Start()
@@ -51,8 +52,15 @@ namespace Tofunaut.Deeep.Game
         // --------------------------------------------------------------------------------------------
         protected virtual void Update()
         {
-            TryChooseNextTargetPosition();
-            TryMoveInteractOffset();
+            GetFacingColliders();
+
+            if (PlayerActor.MoveMode == PlayerActor.EMoveMode.FreeMove)
+            {
+                TryChooseNextTargetPosition();
+                TryMoveInteractOffset();
+                TryInteract();
+            }
+
             UpdateMovement();
         }
 
@@ -139,6 +147,51 @@ namespace Tofunaut.Deeep.Game
         }
 
         // --------------------------------------------------------------------------------------------
+        protected virtual void GetFacingColliders()
+        {
+            _facingColliders = Physics2D.OverlapCircleAll(_targetPosition + _interactOffset, 0.4f);
+        }
+
+        // --------------------------------------------------------------------------------------------
+        private delegate void InteractDelegate(Interactable interactable);
+        protected virtual void TryInteract()
+        {
+            InteractDelegate interactDelegate = null;
+            if (_input.space.Pressed)
+            {
+                interactDelegate = BeginInteract;
+            }
+            else if(_input.space.Released)
+            {
+                interactDelegate = EndInteract;
+            }
+
+            if(interactDelegate != null)
+            {
+                foreach (Collider2D collider in _facingColliders)
+                {
+                    Interactable[] interactables = collider.GetComponents<Interactable>();
+                    foreach (Interactable interactable in interactables)
+                    {
+                        interactDelegate(interactable);
+                    }
+                }
+            }
+        }
+
+        // --------------------------------------------------------------------------------------------
+        protected virtual void BeginInteract(Interactable interactable)
+        {
+            interactable.BeginInteract(this);
+        }
+
+        // --------------------------------------------------------------------------------------------
+        protected virtual void EndInteract(Interactable interactable)
+        {
+            interactable.EndInteract(this);
+        }
+
+        // --------------------------------------------------------------------------------------------
         protected virtual bool CanOccupyPosition(Vector3 position)
         {
             return Physics2D.OverlapCircleAll(position.Vector2_XY(), 0.4f, LayerMask.GetMask("Blocking", "Actor")).Length == 0;
@@ -150,6 +203,11 @@ namespace Tofunaut.Deeep.Game
             return true;
         }
 
+        // --------------------------------------------------------------------------------------------
+        public void ReceivePlayerInput(ActorInput input)
+        {
+            _input = input;
+        }
     }
 
     // --------------------------------------------------------------------------------------------

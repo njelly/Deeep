@@ -14,7 +14,7 @@ using UnityEngine;
 namespace Tofunaut.Deeep.Game
 {
     // --------------------------------------------------------------------------------------------
-    public class PlayerActor : Actor, ActorInput.IReceiver
+    public class PlayerActor : Actor
     {
         // --------------------------------------------------------------------------------------------
         public enum EMoveMode
@@ -70,19 +70,21 @@ namespace Tofunaut.Deeep.Game
         // --------------------------------------------------------------------------------------------
         protected override void Update()
         {
-            base.Update();
-
-            _playerReticle.AnimateInteractReticleMove(_interactOffset);
-
-            if (_input.space.Released)
+            if(MoveMode == EMoveMode.Tactical)
             {
-                // turn off the player reticle flash, this comes before the tactical check
-                _playerReticle.AnimateInteractReticleColor(_playerReticle.CurrentColor);
-            }
+                if (!_playerHasTakenTacticalTurn)
+                {
+                    TryChooseNextTargetPosition();
+                }
 
-            if (MoveMode == EMoveMode.Tactical && _playerHasTakenTacticalTurn)
-            {
-                if(_tacticalTurnCooldownAnimation == null)
+                TryMoveInteractOffset();
+
+                if (!_playerHasTakenTacticalTurn)
+                {
+                    TryInteract();
+                }
+
+                if (_playerHasTakenTacticalTurn && _tacticalTurnCooldownAnimation == null)
                 {
                     _tacticalTurnCooldownAnimation = new TofuAnimation()
                         .Wait(TakeTurnCooldown)
@@ -95,26 +97,20 @@ namespace Tofunaut.Deeep.Game
                         })
                         .Play();
                 }
-
-                return;
             }
+
+            base.Update();
+
+            _playerReticle.AnimateInteractReticleMove(_interactOffset);
 
             if (_input.space.Pressed)
             {
-                // turn on the player reticle flash
-                _playerReticle.AnimateInteractReticleColor();
+                _playerReticle.AnimateInteractReticleColor(1f);
             }
-
-            _playerHasTakenTacticalTurn |= !transform.localPosition.IsApproximately(_targetPosition);
-
-            // try to interact
-            if (_input.space.Pressed)
+            if (_input.space.Released)
             {
-                BeginInteract();
-            }
-            else if (_input.space.Released)
-            {
-                EndInteract();
+                // turn off the player reticle flash, this comes before the tactical check
+                _playerReticle.AnimateInteractReticleColor(_playerReticle.CurrentColor);
             }
 
             if (UnityEngine.Input.GetKeyDown(KeyCode.Tab))
@@ -128,6 +124,51 @@ namespace Tofunaut.Deeep.Game
                     SetMoveMode(EMoveMode.FreeMove);
                 }
             }
+        }
+
+        // --------------------------------------------------------------------------------------------
+        protected override void TryChooseNextTargetPosition()
+        {
+            switch (MoveMode)
+            {
+                case EMoveMode.FreeMove:
+                    base.TryChooseNextTargetPosition();
+                    break;
+                case EMoveMode.Tactical:
+                    if (!_playerHasTakenTacticalTurn)
+                    {
+                        Vector3 previousTargetPosition = _targetPosition;
+                        base.TryChooseNextTargetPosition();
+                        _playerHasTakenTacticalTurn = !previousTargetPosition.IsApproximately(_targetPosition);
+                    }
+                    break;
+            }
+        }
+
+
+        // --------------------------------------------------------------------------------------------
+        protected override void TryInteract()
+        {
+            if (MoveMode == EMoveMode.Tactical && _tacticalTurnCooldownAnimation != null)
+            {
+                return;
+            }
+
+            base.TryInteract();
+        }
+
+        // --------------------------------------------------------------------------------------------
+        protected override void BeginInteract(Interactable interactable)
+        {
+            _playerHasTakenTacticalTurn = true;
+            base.BeginInteract(interactable);
+        }
+
+        // --------------------------------------------------------------------------------------------
+        protected override void EndInteract(Interactable interactable)
+        {
+            _playerHasTakenTacticalTurn = true;
+            base.EndInteract(interactable);
         }
 
         // --------------------------------------------------------------------------------------------
@@ -174,34 +215,6 @@ namespace Tofunaut.Deeep.Game
         }
 
         // --------------------------------------------------------------------------------------------
-        protected virtual void BeginInteract()
-        {
-            bool didInteract = false;
-            foreach (Collider2D collider in Physics2D.OverlapCircleAll(_targetPosition + _interactOffset, 0.4f))
-            {
-                foreach (Interactable interactable in collider.GetComponents<Interactable>())
-                {
-                    interactable.BeginInteract(this);
-                    didInteract |= true;
-                }
-            }
-
-            _playerHasTakenTacticalTurn |= didInteract;
-        }
-
-        // --------------------------------------------------------------------------------------------
-        protected virtual void EndInteract()
-        {
-            foreach (Collider2D collider in Physics2D.OverlapCircleAll(_targetPosition + _interactOffset, 0.4f))
-            {
-                foreach (Interactable interactable in collider.GetComponents<Interactable>())
-                {
-                    interactable.EndInteract(this);
-                }
-            }
-        }
-
-        // --------------------------------------------------------------------------------------------
         public void Hold(Holdable holdable)
         {
             if(Holding)
@@ -220,12 +233,6 @@ namespace Tofunaut.Deeep.Game
                 _holdingPrevParent = holdable.transform.parent;
                 Holding.transform.SetParent(_playerReticle.transform);
             }
-        }
-
-        // --------------------------------------------------------------------------------------------
-        public void ReceivePlayerInput(ActorInput input)
-        {
-            _input = input;
         }
 
         // --------------------------------------------------------------------------------------------
