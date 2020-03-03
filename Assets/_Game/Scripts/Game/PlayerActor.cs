@@ -247,6 +247,7 @@ namespace Tofunaut.Deeep.Game
             MoveMode = moveMode;
 
             _playerHasTakenTacticalTurn = false;
+            _tacticalTurnCooldownAnimation?.Stop();
 
             MoveModeChanged?.Invoke(this, new MoveModeEventArgs(previousMode, MoveMode));
         }

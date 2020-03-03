@@ -9,12 +9,8 @@
 namespace Tofunaut.Deeep.Game
 {
     // --------------------------------------------------------------------------------------------
-    public class EnemyActor : Actor, ActorInput.IReceiver
+    public class EnemyActor : NPCActor
     {
-        // --------------------------------------------------------------------------------------------
-        public void ReceivePlayerInput(ActorInput input)
-        {
-            _input = input;
-        }
+
     }
 }
