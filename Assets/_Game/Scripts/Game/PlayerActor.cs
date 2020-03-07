@@ -174,7 +174,7 @@ namespace Tofunaut.Deeep.Game
         // --------------------------------------------------------------------------------------------
         protected override bool CanOccupyPosition(Vector3 position)
         {
-            if(MoveMode == EMoveMode.Tactical && _tacticalTurnCooldownAnimation != null)
+            if (MoveMode == EMoveMode.Tactical && _tacticalTurnCooldownAnimation != null)
             {
                 return false;
             }

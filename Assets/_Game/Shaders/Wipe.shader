@@ -7,8 +7,9 @@ Shader "Tofunaut/Sprites/Wipe"
 		[PerRendererData] _MainTex ("Sprite Texture", 2D) = "white" {}
 		_Color ("Tint", Color) = (1,1,1,1)
 		[MaterialToggle] PixelSnap ("Pixel snap", Float) = 0
-        [Pivot] _Pivot ("Pivot", Vector) = (0.5, 0.5, 0, 0)
-        [HideBottom] _HideBottom ("Hide Bottom", Float) = 0
+        [PivotX] _PivotX ("Pivot X", Range(0, 1)) = 0.5
+        [PivotX] _PivotY ("Pivot Y", Range(0, 1)) = 0.5
+        [Angle] _Angle ("Angle", Range(0, 360)) = 0
 	}
 
 	SubShader
@@ -51,7 +52,9 @@ Shader "Tofunaut/Sprites/Wipe"
 			
 			fixed4 _Color;
             fixed4 _Pivot;
-            float _HideBottom;
+            float _PivotX;
+            float _PivotY;
+            float _Angle;
 
 			v2f vert(appdata_t IN)
 			{
@@ -70,29 +73,30 @@ Shader "Tofunaut/Sprites/Wipe"
 			sampler2D _AlphaTex;
 			float _AlphaSplitEnabled;
 
+            float3 RotateAroundZInDegrees (float3 vertex, float degrees)
+            {
+                float alpha = degrees * UNITY_PI / 180.0;
+                float sina, cosa;
+                sincos(alpha, sina, cosa);
+                float2x2 m = float2x2(cosa, -sina, sina, cosa);
+                //return float3(mul(m, vertex.xz), vertex.y).xzy;
+
+                return float3(mul(m, vertex.xy), vertex.z).zxy;
+            }
+
 			fixed4 SampleSpriteTexture (float2 uv)
 			{
-            				fixed4 color = tex2D (_MainTex, uv);
+            	fixed4 color = tex2D (_MainTex, uv);
+
+                float3 rot = RotateAroundZInDegrees((uv.x, uv.y, 0) - (_PivotX, _PivotY, 0), _Angle) + (_PivotX, _PivotY, 0);
+
+                color.r = uv.x * 255;
+                color.g = uv.y * 255;
             
-                            if(uv.y > _Pivot.y)
-                            {
-                                if(_HideBottom > 0.5)
-                                {
-                                    color.a = 0;
-                                }
-                            }
-                            else
-                            {
-                                if(_HideBottom <= 0.5)
-                                {
-                                    color.a = 0;
-                                }
-                            }
-            
-            #if UNITY_TEXTURE_ALPHASPLIT_ALLOWED
-            				if (_AlphaSplitEnabled)
-            					color.a = tex2D (_AlphaTex, uv).r;
-            #endif //UNITY_TEXTURE_ALPHASPLIT_ALLOWED
+                #if UNITY_TEXTURE_ALPHASPLIT_ALLOWED
+            		if (_AlphaSplitEnabled)
+            			color.a = tex2D (_AlphaTex, uv).r;
+                #endif //UNITY_TEXTURE_ALPHASPLIT_ALLOWED
 
 				return color;
 			}

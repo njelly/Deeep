@@ -1,3 +1,11 @@
+///////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  DoorInteractable (c) 2020 Tofunaut
+//
+//  Created by Nathaniel Ellingson for Deeep on 03/07/2020
+//
+///////////////////////////////////////////////////////////////////////////////////////////////
+
 using UnityEngine;
 
 namespace Tofunaut.Deeep.Game
@@ -17,7 +25,7 @@ namespace Tofunaut.Deeep.Game
                 _animator.runtimeAnimatorController = _overrideController;
             }
 
-            gameObject.layer = _isOpen ? LayerMask.NameToLayer("Floor") : LayerMask.NameToLayer("Blocking");
+            SetLayer();
             _animator.SetBool("up_down", DetermineIsUpDown());
             _animator.SetBool("open", _isOpen);
         }
@@ -26,7 +34,7 @@ namespace Tofunaut.Deeep.Game
         public override void BeginInteract(Actor instigator)
         {
             _isOpen = !_isOpen;
-            gameObject.layer = _isOpen ? LayerMask.NameToLayer("Floor") : LayerMask.NameToLayer("Blocking");
+            SetLayer();
             _animator.SetBool("open", _isOpen);
         }
 
@@ -40,6 +48,12 @@ namespace Tofunaut.Deeep.Game
             // if the space above and below it is blocked.
             return Physics2D.OverlapCircleAll(transform.position + Vector3.left, 0.4f, LayerMask.GetMask("Blocking")).Length > 0
                 && Physics2D.OverlapCircleAll(transform.position + Vector3.right, 0.4f, LayerMask.GetMask("Blocking")).Length > 0;
+        }
+
+        // --------------------------------------------------------------------------------------------
+        private void SetLayer()
+        {
+            gameObject.layer = _isOpen ? LayerMask.NameToLayer("PassThrough") : LayerMask.NameToLayer("Blocking");
         }
     }
 }
