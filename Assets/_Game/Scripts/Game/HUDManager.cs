@@ -14,9 +14,11 @@ namespace Tofunaut.Deeep.Game
     // --------------------------------------------------------------------------------------------
     public class HUDManager : SingletonBehaviour<HUDManager>
     {
-        [SerializeField] private HUDDialog _hudDialog;
-
         public static HUDDialog HUDDialog => _instance._hudDialog;
+        public static Canvas Canvas => _instance._canvas;
+
+        [SerializeField] private HUDDialog _hudDialog;
+        [SerializeField] private Canvas _canvas;
 
         protected override bool SetDontDestroyOnLoad { get { return true; } }
     }

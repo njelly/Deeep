@@ -7,6 +7,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 using System;
+using Tofunaut.Animation;
 using Tofunaut.UnityUtils;
 using UnityEngine;
 
@@ -30,6 +31,7 @@ namespace Tofunaut.Deeep.Game
         public Inventory Inventory => _inventory;
         public Vector3 TilePosition => new Vector3(Mathf.RoundToInt(transform.localPosition.x), Mathf.RoundToInt(transform.localPosition.y));
         public ActorInput Input => _input;
+        public bool FacingDestructible { get; private set; }
 
         protected ActorInput _input;
         protected Vector3 _targetPosition;
@@ -150,6 +152,12 @@ namespace Tofunaut.Deeep.Game
         protected virtual void GetFacingColliders()
         {
             _facingColliders = Physics2D.OverlapCircleAll(_targetPosition + _interactOffset, 0.4f);
+
+            FacingDestructible = false;
+            foreach(Collider2D collider in _facingColliders)
+            {
+                FacingDestructible |= collider.GetComponent<Destructible>();
+            }
         }
 
         // --------------------------------------------------------------------------------------------
@@ -207,6 +215,29 @@ namespace Tofunaut.Deeep.Game
         public void ReceivePlayerInput(ActorInput input)
         {
             _input = input;
+        }
+
+        // --------------------------------------------------------------------------------------------
+        public void Destructible_OnDamaged(Destructible.DamageEventInfo damageEventInfo)
+        {
+            if (damageEventInfo.DidKill)
+            {
+                Quaternion startRot = Quaternion.Euler(0f, 0f, 0f);
+                Quaternion endRot = Quaternion.Euler(90f, 0f, 0f);
+
+                // TODO: temp death anim
+                new TofuAnimation()
+                    .Value01(1f, EEaseType.EaseInOutBack, (float newValue) =>
+                    {
+                        transform.localRotation = Quaternion.LerpUnclamped(startRot, endRot, newValue);
+                    })
+                    .Then()
+                    .Execute(() =>
+                    {
+                        Destroy(gameObject);
+                    })
+                    .Play();
+            }
         }
     }
 

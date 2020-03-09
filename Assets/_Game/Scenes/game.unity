@@ -439,6 +439,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _hudDialog: {fileID: 1044040784}
+  _canvas: {fileID: 0}
 --- !u!1 &491227205
 GameObject:
   m_ObjectHideFlags: 0
@@ -686,6 +687,41 @@ PrefabInstance:
     - target: {fileID: 1252470089771971976, guid: ecc17552b020648e6b1733ef4ad4de3b,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1871898279603902840, guid: ecc17552b020648e6b1733ef4ad4de3b,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1871898279603902840, guid: ecc17552b020648e6b1733ef4ad4de3b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1871898279603902840, guid: ecc17552b020648e6b1733ef4ad4de3b,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1871898279603902840, guid: ecc17552b020648e6b1733ef4ad4de3b,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2365214271989507634, guid: ecc17552b020648e6b1733ef4ad4de3b,
+        type: 3}
+      propertyPath: m_Name
+      value: HealthBar
+      objectReference: {fileID: 0}
+    - target: {fileID: 4858617415286260494, guid: ecc17552b020648e6b1733ef4ad4de3b,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4858617415286260494, guid: ecc17552b020648e6b1733ef4ad4de3b,
+        type: 3}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8058393697107147044, guid: ecc17552b020648e6b1733ef4ad4de3b,
@@ -1330,6 +1366,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6573890638310739636, guid: ccd7233d30b6a7c479ceb3be3632ee83,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6573890638310739636, guid: ccd7233d30b6a7c479ceb3be3632ee83,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7761383160472758817, guid: ccd7233d30b6a7c479ceb3be3632ee83,
         type: 3}
       propertyPath: m_Name

@@ -6,7 +6,9 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
+using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Tofunaut.Deeep.Game
 {
@@ -15,9 +17,27 @@ namespace Tofunaut.Deeep.Game
     {
         public const float MaxHealth = 100f; // all destructibles start at max health
 
+        // --------------------------------------------------------------------------------------------
+        [Serializable]
+        public struct DamageEventInfo
+        {
+            public bool DidKill => currentHealth <= 0;
+
+            public EDamageType damageType;
+            public ETargetType targetType;
+            public float previousHealth;
+            public float currentHealth;
+        }
+
+        // --------------------------------------------------------------------------------------------
+        [Serializable]
+        public class DamageEvent : UnityEvent<DamageEventInfo> { }
+
         [SerializeField] private ETargetType _targetType;
+        [SerializeField] private DamageEvent _onDamaged;
 
         public ETargetType TargetType => _targetType;
+        public float HealthPercent => _health / MaxHealth;
 
         private float _health;
 
@@ -30,11 +50,16 @@ namespace Tofunaut.Deeep.Game
         // --------------------------------------------------------------------------------------------
         public void TakeDamage(EDamageType damageType)
         {
+            float previousHealth = _health;
             _health -= DamageMatrix.GetDamage(_targetType, damageType);
-            if(_health <= 0f)
+
+            _onDamaged?.Invoke(new DamageEventInfo
             {
-                Destroy(gameObject);
-            }
+                damageType = damageType,
+                targetType = TargetType,
+                previousHealth = previousHealth,
+                currentHealth = _health,
+            }) ;
         }
     }
 }

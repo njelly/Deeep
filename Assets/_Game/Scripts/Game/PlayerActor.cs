@@ -10,6 +10,7 @@ using System;
 using Tofunaut.Animation;
 using Tofunaut.UnityUtils;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Tofunaut.Deeep.Game
 {
@@ -25,6 +26,8 @@ namespace Tofunaut.Deeep.Game
         }
 
         private const float TakeTurnCooldown = 1f;
+
+        public class MoveModeChangedEvent : UnityEvent<EMoveMode, EMoveMode> { }
 
         public event EventHandler<MoveModeEventArgs> MoveModeChanged;
         public event EventHandler TakeTacticalTurn;
