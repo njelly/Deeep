@@ -689,36 +689,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1871898279603902840, guid: ecc17552b020648e6b1733ef4ad4de3b,
-        type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1871898279603902840, guid: ecc17552b020648e6b1733ef4ad4de3b,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1871898279603902840, guid: ecc17552b020648e6b1733ef4ad4de3b,
-        type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1871898279603902840, guid: ecc17552b020648e6b1733ef4ad4de3b,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2365214271989507634, guid: ecc17552b020648e6b1733ef4ad4de3b,
-        type: 3}
-      propertyPath: m_Name
-      value: HealthBar
-      objectReference: {fileID: 0}
-    - target: {fileID: 3115174793153236893, guid: ecc17552b020648e6b1733ef4ad4de3b,
-        type: 3}
-      propertyPath: m_Name
-      value: ActorReticle
-      objectReference: {fileID: 0}
     - target: {fileID: 4858617415286260494, guid: ecc17552b020648e6b1733ef4ad4de3b,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -729,13 +699,7 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8058393697107147044, guid: ecc17552b020648e6b1733ef4ad4de3b,
-        type: 3}
-      propertyPath: viewAngle
-      value: 199
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 4661359272712939171, guid: ecc17552b020648e6b1733ef4ad4de3b, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ecc17552b020648e6b1733ef4ad4de3b, type: 3}
 --- !u!1 &1044040779
 GameObject:

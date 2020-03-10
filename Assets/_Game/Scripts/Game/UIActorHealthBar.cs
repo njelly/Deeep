@@ -33,13 +33,35 @@ namespace Tofunaut.Deeep.Game
             _slider.value = _destructible.HealthPercent;
             _canvasGroup.alpha = 0f;
 
-            PlayerActor.Instance.MoveModeChanged += PlayerActor_MoveModeChanged;
+            if(PlayerActor.Instance)
+            {
+                PlayerActor.Instance.AddMoveModeChangedListener(OnMoveModeChanged);
+            }
+
+            if(_destructible)
+            {
+                _destructible.AddDamageListener(OnDamaged);
+            }
         }
 
         // --------------------------------------------------------------------------------------------
-        private void PlayerActor_MoveModeChanged(object sender, MoveModeEventArgs e)
+        private void OnDestroy()
         {
-            switch(e.currentMode)
+            if (PlayerActor.Instance)
+            {
+                PlayerActor.Instance.RemoveMoveModeChangedListener(OnMoveModeChanged);
+            }
+
+            if (_destructible)
+            {
+                _destructible.RemoveDamageListener(OnDamaged);
+            }
+        }
+
+        // --------------------------------------------------------------------------------------------
+        public void OnMoveModeChanged(PlayerActor.MoveModeChangedInfo info)
+        {
+            switch(info.currentMode)
             {
                 case PlayerActor.EMoveMode.Tactical:
                     if(!_visible)
@@ -57,7 +79,7 @@ namespace Tofunaut.Deeep.Game
         }
 
         // --------------------------------------------------------------------------------------------
-        public void Destructible_OnDamaged(Destructible.DamageEventInfo damageEventInfo)
+        private void OnDamaged(Destructible.DamageEventInfo info)
         {
             if(!_visible)
             {
@@ -65,7 +87,7 @@ namespace Tofunaut.Deeep.Game
             }
 
             float startAmount = _slider.value;
-            float endAmount = damageEventInfo.currentHealth / Destructible.MaxHealth;
+            float endAmount = info.currentHealth / Destructible.MaxHealth;
 
             _sliderAnimation?.Stop();
             _sliderAnimation = new TofuAnimation()

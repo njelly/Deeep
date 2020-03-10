@@ -16,25 +16,42 @@ namespace Tofunaut.Deeep.Game
         {
             base.Start();
 
-            PlayerActor.Instance.MoveModeChanged += PlayerActor_MoveModeChanged;
+            if (PlayerActor.Instance)
+            {
+                PlayerActor.Instance.AddMoveModeChangedListener(OnMoveModeChanged);
+            }
         }
 
         // --------------------------------------------------------------------------------------------
-        private void PlayerActor_MoveModeChanged(object sender, MoveModeEventArgs e)
+        protected virtual void OnDestroy()
         {
-            if(e.previousMode == PlayerActor.EMoveMode.Tactical)
+            if(PlayerActor.Instance)
             {
-                
-            PlayerActor.Instance.TakeTacticalTurn += PlayerActor_TakeTacticalTurn;
-            }
-            if(e.currentMode == PlayerActor.EMoveMode.Tactical)
-            {
-                PlayerActor.Instance.TakeTacticalTurn += PlayerActor_TakeTacticalTurn;
+                PlayerActor.Instance.RemoveMoveModeChangedListener(OnMoveModeChanged);
             }
         }
 
         // --------------------------------------------------------------------------------------------
-        private void PlayerActor_TakeTacticalTurn(object sender, System.EventArgs e)
+        private void OnMoveModeChanged(PlayerActor.MoveModeChangedInfo info)
+        {
+            if (info.previousMode == PlayerActor.EMoveMode.Tactical)
+            {
+                if (PlayerActor.Instance)
+                {
+                    PlayerActor.Instance.RemoveTakeTacticalTurnListener(OnTakeTacticalTurn);
+                }
+            }
+            if(info.currentMode == PlayerActor.EMoveMode.Tactical)
+            {
+                if (PlayerActor.Instance)
+                {
+                    PlayerActor.Instance.AddTakeTacticalTurnListener(OnTakeTacticalTurn);
+                }
+            }
+        }
+
+        // --------------------------------------------------------------------------------------------
+        private void OnTakeTacticalTurn()
         {
             TryChooseNextTargetPosition();
             TryMoveInteractOffset();

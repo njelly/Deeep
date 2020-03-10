@@ -23,7 +23,6 @@ namespace Tofunaut.Deeep.Game
         // --------------------------------------------------------------------------------------------
         private void Start()
         {
-            PlayerActor.Instance.MoveModeChanged += PlayerActor_MoveModeChanged;
             SetMoveModeText(PlayerActor.MoveMode);
         }
 
@@ -67,9 +66,9 @@ namespace Tofunaut.Deeep.Game
         }
 
         // --------------------------------------------------------------------------------------------
-        private void PlayerActor_MoveModeChanged(object sender, MoveModeEventArgs e)
+        public void OnMoveModeChanged(PlayerActor.MoveModeChangedInfo info)
         {
-            SetMoveModeText(e.currentMode, true);
+            SetMoveModeText(info.currentMode, true);
         }
     }
 }

@@ -34,10 +34,15 @@ namespace Tofunaut.Deeep.Game
         public class DamageEvent : UnityEvent<DamageEventInfo> { }
 
         [SerializeField] private ETargetType _targetType;
+        
+        [Space(10)]
         [SerializeField] private DamageEvent _onDamaged;
 
         public ETargetType TargetType => _targetType;
         public float HealthPercent => _health / MaxHealth;
+
+        public void AddDamageListener(UnityAction<DamageEventInfo> action) => _onDamaged.AddListener(action);
+        public void RemoveDamageListener(UnityAction<DamageEventInfo> action) => _onDamaged.RemoveListener(action);
 
         private float _health;
 

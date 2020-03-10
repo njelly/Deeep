@@ -53,11 +53,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spriteRenderer: {fileID: 7128360871445256075}
   _animator: {fileID: 5517177734069322150}
-  _overrideController: {fileID: 0}
   _collider: {fileID: 7389173610227185888}
   _inventory: {fileID: 2632920777391683228}
   _moveSpeed: 5
   _reticle: {fileID: 1772846461666675462}
+  _moveModeChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  _takeTacticalTurn:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!61 &7389173610227185888
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -21,7 +21,6 @@ namespace Tofunaut.Deeep.Game
         [Header("Components")]
         [SerializeField] protected SpriteRenderer _spriteRenderer;
         [SerializeField] protected Animator _animator;
-        [SerializeField] protected AnimatorOverrideController _overrideController;
         [SerializeField] protected Collider2D _collider;
 
         [Header("Actor")]
@@ -46,11 +45,6 @@ namespace Tofunaut.Deeep.Game
             _input = new ActorInput();
             _targetPosition = transform.localPosition;
             _interactOffset = Vector3.right;
-
-            if(_overrideController != null)
-            {
-                _animator.runtimeAnimatorController = _overrideController;
-            }
         }
 
         // --------------------------------------------------------------------------------------------

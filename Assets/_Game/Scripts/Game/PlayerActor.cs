@@ -25,12 +25,17 @@ namespace Tofunaut.Deeep.Game
             Paused,
         }
 
+        // --------------------------------------------------------------------------------------------
+        public struct MoveModeChangedInfo
+        {
+            public EMoveMode previousMode;
+            public EMoveMode currentMode;
+        }
+
+        [Serializable]
+        public class MoveModeChangedEvent : UnityEvent<MoveModeChangedInfo> { }
+
         private const float TakeTurnCooldown = 1f;
-
-        public class MoveModeChangedEvent : UnityEvent<EMoveMode, EMoveMode> { }
-
-        public event EventHandler<MoveModeEventArgs> MoveModeChanged;
-        public event EventHandler TakeTacticalTurn;
 
         public static PlayerActor Instance { get; private set; }
         public static EMoveMode MoveMode { get; private set; }
@@ -40,9 +45,18 @@ namespace Tofunaut.Deeep.Game
         [Header("Player")]
         [SerializeField] private ActorReticle _reticle;
 
+        [Space(10)]
+        [SerializeField] private MoveModeChangedEvent _moveModeChanged;
+        [SerializeField] private UnityEvent _takeTacticalTurn;
+
         private Transform _holdingPrevParent;
         private bool _playerHasTakenTacticalTurn;
         private TofuAnimation _tacticalTurnCooldownAnimation;
+
+        public void AddTakeTacticalTurnListener(UnityAction action) => _takeTacticalTurn.AddListener(action);
+        public void RemoveTakeTacticalTurnListener(UnityAction action) => _takeTacticalTurn.RemoveListener(action);
+        public void AddMoveModeChangedListener(UnityAction<MoveModeChangedInfo> action) => _moveModeChanged.AddListener(action);
+        public void RemoveMoveModeChangedListener(UnityAction<MoveModeChangedInfo> action) => _moveModeChanged.RemoveListener(action);
 
         // --------------------------------------------------------------------------------------------
         private void Awake()
@@ -94,7 +108,7 @@ namespace Tofunaut.Deeep.Game
                         .Then()
                         .Execute(() =>
                         {
-                            TakeTacticalTurn?.Invoke(this, EventArgs.Empty);
+                            _takeTacticalTurn?.Invoke();
                             _playerHasTakenTacticalTurn = false;
                             _tacticalTurnCooldownAnimation = null;
                         })
@@ -241,20 +255,11 @@ namespace Tofunaut.Deeep.Game
             _tacticalTurnCooldownAnimation?.Stop();
             _tacticalTurnCooldownAnimation = null;
 
-            MoveModeChanged?.Invoke(this, new MoveModeEventArgs(previousMode, MoveMode));
-        }
-    }
-
-    // --------------------------------------------------------------------------------------------
-    public class MoveModeEventArgs : EventArgs
-    {
-        public readonly PlayerActor.EMoveMode previousMode;
-        public readonly PlayerActor.EMoveMode currentMode;
-
-        public MoveModeEventArgs(PlayerActor.EMoveMode previousMode, PlayerActor.EMoveMode currentMode)
-        {
-            this.previousMode = previousMode;
-            this.currentMode = currentMode;
+            _moveModeChanged?.Invoke(new MoveModeChangedInfo
+            {
+                previousMode = previousMode,
+                currentMode = MoveMode,
+            });
         }
     }
 }

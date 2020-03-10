@@ -102,7 +102,6 @@ namespace Tofunaut.Deeep.Game
 
             bool facingDestructible = false;
             Collider2D[] facingColliders = Physics2D.OverlapCircleAll(transform.position + _actor.InteractOffset, 0.4f);
-            Debug.Log($"facingColliders:  {facingColliders.Length}");
             foreach(Collider2D collider in facingColliders)
             {
                 facingDestructible |= collider.gameObject != _actor.gameObject && collider.gameObject.GetComponent<Destructible>();
