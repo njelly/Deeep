@@ -28,7 +28,7 @@ namespace Tofunaut.Deeep.Game
         private bool _visible;
 
         // --------------------------------------------------------------------------------------------
-        private void Awake()
+        private void Start()
         {
             _slider.value = _destructible.HealthPercent;
             _canvasGroup.alpha = 0f;

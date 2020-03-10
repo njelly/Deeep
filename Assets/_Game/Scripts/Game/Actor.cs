@@ -31,6 +31,7 @@ namespace Tofunaut.Deeep.Game
         public Inventory Inventory => _inventory;
         public Vector3 TilePosition => new Vector3(Mathf.RoundToInt(transform.localPosition.x), Mathf.RoundToInt(transform.localPosition.y));
         public ActorInput Input => _input;
+        public Vector3 InteractOffset => _interactOffset;
         public bool FacingDestructible { get; private set; }
 
         protected ActorInput _input;
@@ -44,6 +45,7 @@ namespace Tofunaut.Deeep.Game
         {
             _input = new ActorInput();
             _targetPosition = transform.localPosition;
+            _interactOffset = Vector3.right;
 
             if(_overrideController != null)
             {

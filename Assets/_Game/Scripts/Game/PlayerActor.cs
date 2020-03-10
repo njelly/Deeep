@@ -35,10 +35,10 @@ namespace Tofunaut.Deeep.Game
         public static PlayerActor Instance { get; private set; }
         public static EMoveMode MoveMode { get; private set; }
 
-        [Header("Player")]
-        [SerializeField] protected PlayerReticle _playerReticle;
-
         public Holdable Holding { get; private set; }
+
+        [Header("Player")]
+        [SerializeField] private ActorReticle _reticle;
 
         private Transform _holdingPrevParent;
         private bool _playerHasTakenTacticalTurn;
@@ -103,18 +103,6 @@ namespace Tofunaut.Deeep.Game
             }
 
             base.Update();
-
-            _playerReticle.AnimateInteractReticleMove(_interactOffset);
-
-            if (_input.space.Pressed)
-            {
-                _playerReticle.AnimateInteractReticleColor(1f);
-            }
-            if (_input.space.Released)
-            {
-                // turn off the player reticle flash, this comes before the tactical check
-                _playerReticle.AnimateInteractReticleColor(_playerReticle.CurrentColor);
-            }
 
             if (UnityEngine.Input.GetKeyDown(KeyCode.Tab))
             {
@@ -234,7 +222,7 @@ namespace Tofunaut.Deeep.Game
             if(Holding)
             {
                 _holdingPrevParent = holdable.transform.parent;
-                Holding.transform.SetParent(_playerReticle.transform);
+                Holding.transform.SetParent(_reticle.transform);
             }
         }
 

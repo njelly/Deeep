@@ -714,6 +714,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: HealthBar
       objectReference: {fileID: 0}
+    - target: {fileID: 3115174793153236893, guid: ecc17552b020648e6b1733ef4ad4de3b,
+        type: 3}
+      propertyPath: m_Name
+      value: ActorReticle
+      objectReference: {fileID: 0}
     - target: {fileID: 4858617415286260494, guid: ecc17552b020648e6b1733ef4ad4de3b,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -729,7 +734,8 @@ PrefabInstance:
       propertyPath: viewAngle
       value: 199
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4661359272712939171, guid: ecc17552b020648e6b1733ef4ad4de3b, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: ecc17552b020648e6b1733ef4ad4de3b, type: 3}
 --- !u!1 &1044040779
 GameObject:

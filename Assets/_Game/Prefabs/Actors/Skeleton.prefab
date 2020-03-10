@@ -458,7 +458,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c1465ebc26b442a19ee3bce1bba1625, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _destructible: {fileID: 0}
+  _destructible: {fileID: 3092073973086047570}
   _slider: {fileID: 1633311583937561322}
   _sliderAnimTime: 0.5
   _canvasGroup: {fileID: 7629463087359338339}

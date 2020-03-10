@@ -57,7 +57,7 @@ MonoBehaviour:
   _collider: {fileID: 7389173610227185888}
   _inventory: {fileID: 2632920777391683228}
   _moveSpeed: 5
-  _playerReticle: {fileID: 4661359272712939171}
+  _reticle: {fileID: 1772846461666675462}
 --- !u!61 &7389173610227185888
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -422,7 +422,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6770485890136224582}
-  - component: {fileID: 4661359272712939171}
+  - component: {fileID: 1772846461666675462}
   - component: {fileID: 6305067961648938541}
   m_Layer: 11
   m_Name: InteractReticle
@@ -445,7 +445,7 @@ Transform:
   m_Father: {fileID: 1252470089771971976}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4661359272712939171
+--- !u!114 &1772846461666675462
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -454,12 +454,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 3115174793153236893}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bb0a287ddc8149b38b5da1c73027633, type: 3}
+  m_Script: {fileID: 11500000, guid: 53510a05115a14a33b5d915c60c4a5a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _actor: {fileID: 1673985475239145550}
   _spriteRenderer: {fileID: 6305067961648938541}
   _defaultColor: {r: 0.5784977, g: 1, b: 1, a: 0.19607843}
-  _attackColor: {r: 1, g: 0.5803922, b: 0.58869547, a: 0.19607843}
+  _attackColor: {r: 0.99607843, g: 0.6784314, b: 0.687667, a: 0.19607843}
+  _moveAnimTime: 0.1
+  _colorAnimTime: 0.1
+  _alphaAnimTime: 0.1
 --- !u!212 &6305067961648938541
 SpriteRenderer:
   m_ObjectHideFlags: 0
