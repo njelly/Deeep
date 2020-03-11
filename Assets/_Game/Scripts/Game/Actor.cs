@@ -25,19 +25,18 @@ namespace Tofunaut.Deeep.Game
 
         [Header("Actor")]
         [SerializeField] protected Inventory _inventory;
+        [SerializeField] protected Destructible _destructible;
         [SerializeField] protected float _moveSpeed;
 
         public Inventory Inventory => _inventory;
         public Vector3 TilePosition => new Vector3(Mathf.RoundToInt(transform.localPosition.x), Mathf.RoundToInt(transform.localPosition.y));
         public ActorInput Input => _input;
         public Vector3 InteractOffset => _interactOffset;
-        public bool FacingDestructible { get; private set; }
 
         protected ActorInput _input;
         protected Vector3 _targetPosition;
         protected Vector3 _previousPosition;
         protected Vector3 _interactOffset;
-        protected Collider2D[] _facingColliders;
 
         // --------------------------------------------------------------------------------------------
         protected virtual void Start()
@@ -45,13 +44,19 @@ namespace Tofunaut.Deeep.Game
             _input = new ActorInput();
             _targetPosition = transform.localPosition;
             _interactOffset = Vector3.right;
+
+            _destructible.AddDamageListener(OnDamaged);
+        }
+
+        // --------------------------------------------------------------------------------------------
+        protected virtual void OnDestroy()
+        {
+            _destructible.RemoveDamageListener(OnDamaged);
         }
 
         // --------------------------------------------------------------------------------------------
         protected virtual void Update()
         {
-            GetFacingColliders();
-
             if (PlayerActor.MoveMode == PlayerActor.EMoveMode.FreeMove)
             {
                 TryChooseNextTargetPosition();
@@ -145,18 +150,6 @@ namespace Tofunaut.Deeep.Game
         }
 
         // --------------------------------------------------------------------------------------------
-        protected virtual void GetFacingColliders()
-        {
-            _facingColliders = Physics2D.OverlapCircleAll(_targetPosition + _interactOffset, 0.4f);
-
-            FacingDestructible = false;
-            foreach(Collider2D collider in _facingColliders)
-            {
-                FacingDestructible |= collider.GetComponent<Destructible>();
-            }
-        }
-
-        // --------------------------------------------------------------------------------------------
         private delegate void InteractDelegate(Interactable interactable);
         protected virtual void TryInteract()
         {
@@ -170,9 +163,10 @@ namespace Tofunaut.Deeep.Game
                 interactDelegate = EndInteract;
             }
 
+            Collider2D[] facingColliders = Physics2D.OverlapCircleAll(transform.position + _interactOffset, 0.4f);
             if(interactDelegate != null)
             {
-                foreach (Collider2D collider in _facingColliders)
+                foreach (Collider2D collider in facingColliders)
                 {
                     Interactable[] interactables = collider.GetComponents<Interactable>();
                     foreach (Interactable interactable in interactables)
@@ -214,7 +208,7 @@ namespace Tofunaut.Deeep.Game
         }
 
         // --------------------------------------------------------------------------------------------
-        public void Destructible_OnDamaged(Destructible.DamageEventInfo damageEventInfo)
+        public void OnDamaged(Destructible.DamageEventInfo damageEventInfo)
         {
             if (damageEventInfo.DidKill)
             {
