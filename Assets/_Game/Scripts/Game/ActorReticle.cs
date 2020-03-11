@@ -39,8 +39,6 @@ namespace Tofunaut.Deeep.Game
             _targetColor = _defaultColor;
             _targetAlpha = _defaultColor.a;
             _previousInteractOffset = _actor.InteractOffset;
-
-            _lastCallTime = Time.time;
         }
 
         // --------------------------------------------------------------------------------------------
@@ -50,18 +48,16 @@ namespace Tofunaut.Deeep.Game
 
             UpdateReticleColor();
             UpdateReticleAlpha();
-            //_spriteRenderer.color = _currentColor;
+            _spriteRenderer.color = _currentColor;
         }
 
         // --------------------------------------------------------------------------------------------
-        private float _lastCallTime;
         private void UpdateReticleMove()
         {
             if (_previousInteractOffset.IsApproximately(_actor.InteractOffset, 0.01f))
             {
                 return;
             }
-
 
             _previousInteractOffset = _actor.InteractOffset;
 
@@ -76,14 +72,6 @@ namespace Tofunaut.Deeep.Game
             {
                 fromAngle -= Mathf.PI * 2f;
             }
-
-            if(Time.time - _lastCallTime < 0.01f)
-            {
-                Debug.Log("WHOA SLOW DOWN THERE");
-                return;
-            }
-
-            _lastCallTime = Time.time;
 
             _reticleMoveAnimation?.Stop();
             _reticleMoveAnimation = new TofuAnimation()
@@ -106,13 +94,13 @@ namespace Tofunaut.Deeep.Game
             Color changeTo = _defaultColor;
 
             bool facingDestructible = false;
-            Collider2D[] facingColliders = Physics2D.OverlapCircleAll(transform.position + _actor.InteractOffset, 0.4f);
-            foreach(Collider2D collider in facingColliders)
+            Collider2D[] facingColliders = Physics2D.OverlapCircleAll(_actor.transform.position + _actor.InteractOffset, 0.4f);
+            foreach (Collider2D collider in facingColliders)
             {
                 facingDestructible |= collider.gameObject != _actor.gameObject && collider.gameObject.GetComponent<Destructible>();
             }
 
-            if(facingDestructible)
+            if (facingDestructible)
             {
                 changeTo = _attackColor;
             }
