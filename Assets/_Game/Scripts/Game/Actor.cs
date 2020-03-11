@@ -6,13 +6,20 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-using System;
 using Tofunaut.Animation;
 using Tofunaut.UnityUtils;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Tofunaut.Deeep.Game
 {
+    public enum EAlliance
+    {
+        None,
+        Player,
+        Enemy,
+    }
+
     // --------------------------------------------------------------------------------------------
     public abstract class Actor : MonoBehaviour, ActorInput.IReceiver
     {
@@ -26,17 +33,27 @@ namespace Tofunaut.Deeep.Game
         [Header("Actor")]
         [SerializeField] protected Inventory _inventory;
         [SerializeField] protected Destructible _destructible;
+        [SerializeField] protected Weapon _equippedWeapon;
         [SerializeField] protected float _moveSpeed;
+        [SerializeField] protected EAlliance _alliance;
+
+        [Space(10)]
+        [SerializeField] protected UnityEvent<Interactable> _onInteracted;
 
         public Inventory Inventory => _inventory;
         public Vector3 TilePosition => new Vector3(Mathf.RoundToInt(transform.localPosition.x), Mathf.RoundToInt(transform.localPosition.y));
         public ActorInput Input => _input;
         public Vector3 InteractOffset => _interactOffset;
+        public EAlliance Alliance => _alliance;
+        public Weapon EquipedWeapon => _equippedWeapon;
 
         protected ActorInput _input;
         protected Vector3 _targetPosition;
         protected Vector3 _previousPosition;
         protected Vector3 _interactOffset;
+
+        public void AddInteractedListener(UnityAction<Interactable> action) => _onInteracted.AddListener(action);
+        public void RemoveInteractedListener(UnityAction<Interactable> action) => _onInteracted.RemoveListener(action);
 
         // --------------------------------------------------------------------------------------------
         protected virtual void Start()
@@ -45,7 +62,7 @@ namespace Tofunaut.Deeep.Game
             _targetPosition = transform.localPosition;
             _interactOffset = Vector3.right;
 
-            if(_destructible)
+            if (_destructible)
             {
                 _destructible.AddDamageListener(OnDamaged);
             }
@@ -54,7 +71,7 @@ namespace Tofunaut.Deeep.Game
         // --------------------------------------------------------------------------------------------
         protected virtual void OnDestroy()
         {
-            if(_destructible)
+            if (_destructible)
             {
                 _destructible.RemoveDamageListener(OnDamaged);
             }
@@ -84,7 +101,7 @@ namespace Tofunaut.Deeep.Game
         // --------------------------------------------------------------------------------------------
         protected virtual void TryChooseNextTargetPosition()
         {
-            if(_input.shift)
+            if (_input.shift)
             {
                 // the Shift key makes sure the actor stays in place
                 return;
@@ -98,11 +115,11 @@ namespace Tofunaut.Deeep.Game
 
             // poll our inputs
             Vector3 potentialTargetPos = _targetPosition;
-            if(_input.up.timeDown > MoveButtonHoldTimeThreshold)
+            if (_input.up.timeDown > MoveButtonHoldTimeThreshold)
             {
                 potentialTargetPos += Vector3.up;
             }
-            else if(_input.down.timeDown > MoveButtonHoldTimeThreshold)
+            else if (_input.down.timeDown > MoveButtonHoldTimeThreshold)
             {
                 potentialTargetPos += Vector3.down;
             }
@@ -115,13 +132,13 @@ namespace Tofunaut.Deeep.Game
                 potentialTargetPos += Vector3.right;
             }
 
-            if(!CanOccupyPosition(potentialTargetPos))
+            if (!CanOccupyPosition(potentialTargetPos))
             {
                 // we can't move there, return
                 return;
             }
 
-            if(!_previousPosition.IsApproximately(transform.localPosition))
+            if (!_previousPosition.IsApproximately(transform.localPosition))
             {
                 // compensate for stutter if we are continuously moving
                 float amountWouldHaveMoved = _moveSpeed * Time.deltaTime - (_previousPosition - transform.localPosition).magnitude;
@@ -164,13 +181,13 @@ namespace Tofunaut.Deeep.Game
             {
                 interactDelegate = BeginInteract;
             }
-            else if(_input.space.Released)
+            else if (_input.space.Released)
             {
                 interactDelegate = EndInteract;
             }
 
             Collider2D[] facingColliders = Physics2D.OverlapCircleAll(transform.position + _interactOffset, 0.4f);
-            if(interactDelegate != null)
+            if (interactDelegate != null)
             {
                 foreach (Collider2D collider in facingColliders)
                 {
@@ -234,6 +251,35 @@ namespace Tofunaut.Deeep.Game
                     })
                     .Play();
             }
+        }
+
+        // --------------------------------------------------------------------------------------------
+        public bool IsAlliedWith(Actor other)
+        {
+            if (other._alliance == EAlliance.None || _alliance == EAlliance.None)
+            {
+                return false;
+            }
+            else
+            {
+                return other._alliance == _alliance;
+            }
+        }
+
+        // --------------------------------------------------------------------------------------------
+        public void EquipWeapon(Weapon weapon)
+        {
+            if(_equippedWeapon)
+            {
+                _equippedWeapon.OnUnequipped();
+                _inventory.Add(_equippedWeapon);
+            }
+
+            weapon.owner = this;
+            weapon.OnEquipped();
+            weapon.gameObject.SetActive(true);
+            weapon.transform.SetParent(transform, false);
+            _equippedWeapon = weapon;
         }
     }
 

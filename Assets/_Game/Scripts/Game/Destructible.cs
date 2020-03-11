@@ -13,7 +13,7 @@ using UnityEngine.Events;
 namespace Tofunaut.Deeep.Game
 {
     // --------------------------------------------------------------------------------------------
-    public class Destructible : MonoBehaviour
+    public class Destructible : Interactable
     {
         public const float MaxHealth = 100f; // all destructibles start at max health
 
@@ -64,7 +64,26 @@ namespace Tofunaut.Deeep.Game
                 targetType = TargetType,
                 previousHealth = previousHealth,
                 currentHealth = _health,
-            }) ;
+            });
         }
+
+        // --------------------------------------------------------------------------------------------
+        public override void BeginInteract(Actor instigator)
+        {
+            if(!instigator.EquipedWeapon)
+            {
+                return;
+            }
+
+            if(!instigator.EquipedWeapon.CanAttackDestructible(this))
+            {
+                return;
+            }
+
+            TakeDamage(instigator.EquipedWeapon.DamageType);
+        }
+
+        // --------------------------------------------------------------------------------------------
+        public override void EndInteract(Actor instigator) { }
     }
 }
