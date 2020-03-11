@@ -6,7 +6,6 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-using System.Collections;
 using Tofunaut.Animation;
 using Tofunaut.UnityUtils;
 using UnityEngine;
@@ -40,6 +39,8 @@ namespace Tofunaut.Deeep.Game
             _targetColor = _defaultColor;
             _targetAlpha = _defaultColor.a;
             _previousInteractOffset = _actor.InteractOffset;
+
+            _lastCallTime = Time.time;
         }
 
         // --------------------------------------------------------------------------------------------
@@ -49,16 +50,18 @@ namespace Tofunaut.Deeep.Game
 
             UpdateReticleColor();
             UpdateReticleAlpha();
-            _spriteRenderer.color = _currentColor;
+            //_spriteRenderer.color = _currentColor;
         }
 
         // --------------------------------------------------------------------------------------------
+        private float _lastCallTime;
         private void UpdateReticleMove()
         {
-            if (_previousInteractOffset.IsApproximately(_actor.InteractOffset))
+            if (_previousInteractOffset.IsApproximately(_actor.InteractOffset, 0.01f))
             {
                 return;
             }
+
 
             _previousInteractOffset = _actor.InteractOffset;
 
@@ -74,13 +77,15 @@ namespace Tofunaut.Deeep.Game
                 fromAngle -= Mathf.PI * 2f;
             }
 
-            _reticleMoveAnimation?.Stop();
-
-            if(_reticleMoveAnimation != null)
+            if(Time.time - _lastCallTime < 0.01f)
             {
-                Debug.Log("stop!");
+                Debug.Log("WHOA SLOW DOWN THERE");
+                return;
             }
 
+            _lastCallTime = Time.time;
+
+            _reticleMoveAnimation?.Stop();
             _reticleMoveAnimation = new TofuAnimation()
                 .Value01(_moveAnimTime, EEaseType.Linear, (float newValue) =>
                 {

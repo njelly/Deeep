@@ -45,13 +45,19 @@ namespace Tofunaut.Deeep.Game
             _targetPosition = transform.localPosition;
             _interactOffset = Vector3.right;
 
-            _destructible.AddDamageListener(OnDamaged);
+            if(_destructible)
+            {
+                _destructible.AddDamageListener(OnDamaged);
+            }
         }
 
         // --------------------------------------------------------------------------------------------
         protected virtual void OnDestroy()
         {
-            _destructible.RemoveDamageListener(OnDamaged);
+            if(_destructible)
+            {
+                _destructible.RemoveDamageListener(OnDamaged);
+            }
         }
 
         // --------------------------------------------------------------------------------------------
