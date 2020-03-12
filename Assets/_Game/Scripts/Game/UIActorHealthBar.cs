@@ -133,7 +133,11 @@ namespace Tofunaut.Deeep.Game
             _fadeAnimation = new TofuAnimation()
                 .Value01(time, EEaseType.Linear, (float newValue) =>
                 {
-                    _canvasGroup.alpha = Mathf.Lerp(startAlpha, endAlpha, newValue);
+                    if(this)
+                    {
+                        // check that we haven't been destroyed
+                        _canvasGroup.alpha = Mathf.Lerp(startAlpha, endAlpha, newValue);
+                    }
                 })
                 .Then()
                 .Wait(_visible ? _lingerTime : 0f)

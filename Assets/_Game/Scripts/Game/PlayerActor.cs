@@ -105,6 +105,11 @@ namespace Tofunaut.Deeep.Game
                 {
                     _tacticalTurnCooldownAnimation = new TofuAnimation()
                         .Wait(TakeTurnCooldown)
+                        .WaitUntil(() =>
+                        {
+                            // wait for the player's attack to complete before telling all the other actors to take their turn 
+                            return !(EquipedWeapon && EquipedWeapon.IsAttacking);
+                        })
                         .Then()
                         .Execute(() =>
                         {

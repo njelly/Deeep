@@ -8,6 +8,7 @@
 
 using UnityEngine;
 using Tofunaut.UnityUtils;
+using Tofunaut.Animation;
 
 namespace Tofunaut.Deeep.Game
 {
@@ -17,8 +18,14 @@ namespace Tofunaut.Deeep.Game
         [Header("Weapon")]
         public Actor owner;
         [SerializeField] protected EDamageType _damageType;
+        [SerializeField] protected float _preAttackDelay;
+        [SerializeField] protected float _postAttackCooldown;
 
         public EDamageType DamageType => _damageType;
+        public bool IsAttacking => _attackSequence != null;
+        public Destructible CurrentlyAttacking { get; private set; }
+
+        private TofuAnimation _attackSequence;
 
         private void OnEnable()
         {
@@ -48,6 +55,7 @@ namespace Tofunaut.Deeep.Game
         // --------------------------------------------------------------------------------------------
         public virtual void OnEquipped() 
         {
+            Debug.Log("on equipped");
             owner.AddInteractedListener(OnOwnerInteracted);
 
             transform.rotation = Quaternion.identity;
@@ -81,6 +89,7 @@ namespace Tofunaut.Deeep.Game
                 {
                     if(!instigator.EquipedWeapon)
                     {
+                        Debug.Log("equip me");
                         inventory.Remove(this, false);
                         instigator.EquipWeapon(this);
                     }
@@ -106,19 +115,60 @@ namespace Tofunaut.Deeep.Game
         }
 
         // --------------------------------------------------------------------------------------------
+        public void InterruptAttack()
+        {
+            _attackSequence?.Stop();
+        }
+
+        // --------------------------------------------------------------------------------------------
         private void OnOwnerInteracted(Actor.InteractedEventInfo info) 
         {
-            if(!owner.EquipedWeapon == this)
+            if (_attackSequence != null)
             {
                 return;
             }
 
-            if(!(info.interactedWith is Destructible))
+            if (!owner.EquipedWeapon == this)
             {
                 return;
             }
 
-            // TODO: trigger some animation here?
+            if (!(info.interactedWith is Destructible))
+            {
+                return;
+            }
+
+            CurrentlyAttacking = info.interactedWith as Destructible;
+
+            _attackSequence = new TofuAnimation()
+                .Execute(() =>
+                {
+                    PreAttackAnimation().Play();
+                })
+                .Wait(_preAttackDelay)
+                .Then()
+                .Execute(() =>
+                {
+                    DoAttack();
+                })
+                .Then()
+                .Execute(() =>
+                {
+                    PostAttackAnimation().Play();
+                })
+                .Wait(_postAttackCooldown)
+                .Then()
+                .Execute(() =>
+                {
+                    _attackSequence = null;
+                    CurrentlyAttacking = null;
+                })
+                .Play();
         }
+
+        // --------------------------------------------------------------------------------------------
+        protected abstract TofuAnimation PreAttackAnimation();
+        protected abstract void DoAttack();
+        protected abstract TofuAnimation PostAttackAnimation();
     }
 }

@@ -100,6 +100,12 @@ namespace Tofunaut.Deeep.Game
         // --------------------------------------------------------------------------------------------
         protected virtual void Update()
         {
+            if (EquipedWeapon && EquipedWeapon.IsAttacking)
+            {
+                // can't move while attacking
+                return;
+            }
+
             if (PlayerActor.MoveMode == PlayerActor.EMoveMode.FreeMove)
             {
                 TryChooseNextTargetPosition();
@@ -217,6 +223,7 @@ namespace Tofunaut.Deeep.Game
                     foreach (Interactable interactable in interactables)
                     {
                         interactDelegate(interactable);
+                        _onInteracted?.Invoke(new InteractedEventInfo() { interactedWith = interactable });
                     }
                 }
             }

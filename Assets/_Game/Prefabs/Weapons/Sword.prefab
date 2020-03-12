@@ -50,6 +50,8 @@ MonoBehaviour:
   goldValue: 5
   owner: {fileID: 0}
   _damageType: 2
+  _preAttackDelay: 0.2
+  _postAttackCooldown: 0.2
 --- !u!212 &6391518721647781500
 SpriteRenderer:
   m_ObjectHideFlags: 0

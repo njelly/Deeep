@@ -68,20 +68,7 @@ namespace Tofunaut.Deeep.Game
         }
 
         // --------------------------------------------------------------------------------------------
-        public override void BeginInteract(Actor instigator)
-        {
-            if(!instigator.EquipedWeapon)
-            {
-                return;
-            }
-
-            if(!instigator.EquipedWeapon.CanAttackDestructible(this))
-            {
-                return;
-            }
-
-            TakeDamage(instigator.EquipedWeapon.DamageType);
-        }
+        public override void BeginInteract(Actor instigator) { }
 
         // --------------------------------------------------------------------------------------------
         public override void EndInteract(Actor instigator) { }
