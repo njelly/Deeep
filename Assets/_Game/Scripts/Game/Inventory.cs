@@ -6,6 +6,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Tofunaut.Animation;
@@ -22,8 +23,8 @@ namespace Tofunaut.Deeep.Game
         private HashSet<InventoryItem> _items = new HashSet<InventoryItem>();
 
         // --------------------------------------------------------------------------------------------
-        public void Add(InventoryItem item) => Add(item, true);
-        public void Add(InventoryItem item, bool animate)
+        public void Add(InventoryItem item) => Add(item, true, null);
+        public void Add(InventoryItem item, bool animate, Action onComplete)
         {
             item.transform.SetParent(transform);
             _items.Add(item);
@@ -41,6 +42,8 @@ namespace Tofunaut.Deeep.Game
                     item.SpriteRenderer.sortingOrder = prevRenderOrder;
                     item.SpriteRenderer.sortingLayerName = prevRenderLayer;
                 }
+
+                onComplete?.Invoke();
             }
 
             if(animate)

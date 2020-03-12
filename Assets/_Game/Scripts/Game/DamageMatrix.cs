@@ -69,6 +69,7 @@ namespace Tofunaut.Deeep.Game
     {
         Invalid,
         Player_Melee,
+        Sword_Melee,
         Skeleton_Melee,
     }
 }

@@ -15,7 +15,7 @@ namespace Tofunaut.Deeep.Game
     public class InventoryItem : Interactable
     {
         [HideInInspector, NonSerialized] public Inventory inventory;
-        [SerializeField] private SpriteRenderer _spriteRenderer;
+        [SerializeField] protected SpriteRenderer _spriteRenderer;
 
         public SpriteRenderer SpriteRenderer => _spriteRenderer;
 

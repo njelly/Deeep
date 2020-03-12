@@ -11,7 +11,7 @@ using UnityEngine;
 namespace Tofunaut.Deeep.Game
 {
     // --------------------------------------------------------------------------------------------
-    public abstract class MeleeWeapon : Weapon
+    public class MeleeWeapon : Weapon
     {
         // --------------------------------------------------------------------------------------------
         public override bool CanAttackDestructible(Destructible destructible)

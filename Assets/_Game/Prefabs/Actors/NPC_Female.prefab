@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1252470089771971976}
   - component: {fileID: 6731437348959675252}
-  - component: {fileID: 7389173610227185888}
+  - component: {fileID: 8532408436335901464}
   - component: {fileID: 7128360871445256075}
   - component: {fileID: 5517177734069322150}
   - component: {fileID: 1105849023672459211}
@@ -49,11 +49,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spriteRenderer: {fileID: 7128360871445256075}
   _animator: {fileID: 5517177734069322150}
-  _collider: {fileID: 7389173610227185888}
+  _collider: {fileID: 8532408436335901464}
   _inventory: {fileID: 1105849023672459211}
+  _destructible: {fileID: 0}
+  _equippedWeapon: {fileID: 0}
   _moveSpeed: 0
---- !u!61 &7389173610227185888
-BoxCollider2D:
+  _alliance: 1
+--- !u!58 &8532408436335901464
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -66,18 +69,8 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
+  m_Radius: 0.5
 --- !u!212 &7128360871445256075
 SpriteRenderer:
   m_ObjectHideFlags: 0

@@ -393,6 +393,85 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!1001 &245835850
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1354543711}
+    m_Modifications:
+    - target: {fileID: 6391518721647781499, guid: ceba7b3229fcf5341a2caf6a4990756a,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6391518721647781499, guid: ceba7b3229fcf5341a2caf6a4990756a,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6391518721647781499, guid: ceba7b3229fcf5341a2caf6a4990756a,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6391518721647781499, guid: ceba7b3229fcf5341a2caf6a4990756a,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6391518721647781499, guid: ceba7b3229fcf5341a2caf6a4990756a,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6391518721647781499, guid: ceba7b3229fcf5341a2caf6a4990756a,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6391518721647781499, guid: ceba7b3229fcf5341a2caf6a4990756a,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6391518721647781499, guid: ceba7b3229fcf5341a2caf6a4990756a,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6391518721647781499, guid: ceba7b3229fcf5341a2caf6a4990756a,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6391518721647781499, guid: ceba7b3229fcf5341a2caf6a4990756a,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6391518721647781499, guid: ceba7b3229fcf5341a2caf6a4990756a,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6391518721647781500, guid: ceba7b3229fcf5341a2caf6a4990756a,
+        type: 3}
+      propertyPath: m_SortingLayerID
+      value: -1359011721
+      objectReference: {fileID: 0}
+    - target: {fileID: 6391518721647781500, guid: ceba7b3229fcf5341a2caf6a4990756a,
+        type: 3}
+      propertyPath: m_SortingLayer
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6391518721647781501, guid: ceba7b3229fcf5341a2caf6a4990756a,
+        type: 3}
+      propertyPath: m_Name
+      value: Sword
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ceba7b3229fcf5341a2caf6a4990756a, type: 3}
 --- !u!1 &364624069
 GameObject:
   m_ObjectHideFlags: 0
@@ -439,7 +518,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _hudDialog: {fileID: 1044040784}
-  _canvas: {fileID: 0}
+  _hudMoveMode: {fileID: 0}
+  _canvas: {fileID: 189397144}
 --- !u!1 &491227205
 GameObject:
   m_ObjectHideFlags: 0
@@ -632,7 +712,7 @@ PrefabInstance:
     - target: {fileID: 1252470089771971974, guid: ecc17552b020648e6b1733ef4ad4de3b,
         type: 3}
       propertyPath: m_Name
-      value: PlayerActorView
+      value: PlayerActor
       objectReference: {fileID: 0}
     - target: {fileID: 1252470089771971976, guid: ecc17552b020648e6b1733ef4ad4de3b,
         type: 3}
@@ -895,6 +975,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1058396717}
   m_CullTransparentMesh: 0
+--- !u!4 &1354543711 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7761383159369167210, guid: ccd7233d30b6a7c479ceb3be3632ee83,
+    type: 3}
+  m_PrefabInstance: {fileID: 7761383158890513244}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1486036329
 GameObject:
   m_ObjectHideFlags: 0
@@ -997,6 +1083,9 @@ MonoBehaviour:
   - target: 1
     damage: 2
     amount: 15
+  - target: 2
+    damage: 2
+    amount: 30
 --- !u!4 &1535316679
 Transform:
   m_ObjectHideFlags: 0

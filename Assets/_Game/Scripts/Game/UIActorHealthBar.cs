@@ -22,6 +22,7 @@ namespace Tofunaut.Deeep.Game
         [SerializeField] private float _sliderAnimTime;
         [SerializeField] private CanvasGroup _canvasGroup;
         [SerializeField] private float _fadeAnimTime;
+        [SerializeField] private float _lingerTime = 1f;
 
         private TofuAnimation _sliderAnimation;
         private TofuAnimation _fadeAnimation;
@@ -104,7 +105,10 @@ namespace Tofunaut.Deeep.Game
                 {
                     if(PlayerActor.MoveMode == PlayerActor.EMoveMode.FreeMove)
                     {
-                        SetVisible(false);
+                        if(this) // check if we've been destroyed first
+                        {
+                            SetVisible(false);
+                        }
                     }
                 })
                 .Then()
@@ -131,6 +135,8 @@ namespace Tofunaut.Deeep.Game
                 {
                     _canvasGroup.alpha = Mathf.Lerp(startAlpha, endAlpha, newValue);
                 })
+                .Then()
+                .Wait(_visible ? _lingerTime : 0f)
                 .Then()
                 .Execute(() =>
                 {

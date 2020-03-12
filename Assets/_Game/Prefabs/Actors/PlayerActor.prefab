@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1252470089771971976}
   - component: {fileID: 1673985475239145550}
-  - component: {fileID: 7389173610227185888}
   - component: {fileID: 7128360871445256075}
   - component: {fileID: 5517177734069322150}
+  - component: {fileID: 8887394227924290764}
   - component: {fileID: 2632920777391683228}
   - component: {fileID: 3956262180596211462}
   - component: {fileID: 8058393697107147044}
@@ -53,10 +53,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spriteRenderer: {fileID: 7128360871445256075}
   _animator: {fileID: 5517177734069322150}
-  _collider: {fileID: 7389173610227185888}
+  _collider: {fileID: 8887394227924290764}
   _inventory: {fileID: 2632920777391683228}
   _destructible: {fileID: 3956262180596211462}
+  _equippedWeapon: {fileID: 0}
   _moveSpeed: 5
+  _alliance: 1
   _reticle: {fileID: 1772846461666675462}
   _moveModeChanged:
     m_PersistentCalls:
@@ -64,32 +66,6 @@ MonoBehaviour:
   _takeTacticalTurn:
     m_PersistentCalls:
       m_Calls: []
---- !u!61 &7389173610227185888
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1252470089771971974}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
 --- !u!212 &7128360871445256075
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -160,6 +136,22 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!58 &8887394227924290764
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1252470089771971974}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.5
 --- !u!114 &2632920777391683228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -261,6 +253,7 @@ MonoBehaviour:
   _sliderAnimTime: 0.5
   _canvasGroup: {fileID: 7786293988641196265}
   _fadeAnimTime: 0.1
+  _lingerTime: 1
 --- !u!114 &7074409821702856641
 MonoBehaviour:
   m_ObjectHideFlags: 0

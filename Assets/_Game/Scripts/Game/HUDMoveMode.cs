@@ -24,6 +24,16 @@ namespace Tofunaut.Deeep.Game
         private void Start()
         {
             SetMoveModeText(PlayerActor.MoveMode);
+
+            PlayerActor.Instance.AddMoveModeChangedListener(OnMoveModeChanged);
+        }
+
+        private void OnDestroy()
+        {
+            if(PlayerActor.Instance)
+            {
+                PlayerActor.Instance.RemoveMoveModeChangedListener(OnMoveModeChanged);
+            }
         }
 
         // --------------------------------------------------------------------------------------------

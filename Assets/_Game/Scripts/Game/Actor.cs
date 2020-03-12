@@ -6,6 +6,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
+using System;
 using Tofunaut.Animation;
 using Tofunaut.UnityUtils;
 using UnityEngine;
@@ -13,6 +14,7 @@ using UnityEngine.Events;
 
 namespace Tofunaut.Deeep.Game
 {
+    // --------------------------------------------------------------------------------------------
     public enum EAlliance
     {
         None,
@@ -21,8 +23,23 @@ namespace Tofunaut.Deeep.Game
     }
 
     // --------------------------------------------------------------------------------------------
+    public enum EFacing
+    {
+        None,
+        Left,
+        Right,
+    }
+
+    // --------------------------------------------------------------------------------------------
     public abstract class Actor : MonoBehaviour, ActorInput.IReceiver
     {
+        [Serializable]
+        public struct InteractedEventInfo
+        {
+            public Interactable interactedWith;
+        }
+        protected class InteractedEvent : UnityEvent<InteractedEventInfo> { }
+
         private const float MoveButtonHoldTimeThreshold = 0.08f;
 
         [Header("Components")]
@@ -38,7 +55,7 @@ namespace Tofunaut.Deeep.Game
         [SerializeField] protected EAlliance _alliance;
 
         [Space(10)]
-        [SerializeField] protected UnityEvent<Interactable> _onInteracted;
+        [SerializeField] protected InteractedEvent _onInteracted = new InteractedEvent();
 
         public Inventory Inventory => _inventory;
         public Vector3 TilePosition => new Vector3(Mathf.RoundToInt(transform.localPosition.x), Mathf.RoundToInt(transform.localPosition.y));
@@ -46,14 +63,16 @@ namespace Tofunaut.Deeep.Game
         public Vector3 InteractOffset => _interactOffset;
         public EAlliance Alliance => _alliance;
         public Weapon EquipedWeapon => _equippedWeapon;
+        public EFacing Facing => _facing;
 
         protected ActorInput _input;
         protected Vector3 _targetPosition;
         protected Vector3 _previousPosition;
         protected Vector3 _interactOffset;
+        protected EFacing _facing;
 
-        public void AddInteractedListener(UnityAction<Interactable> action) => _onInteracted.AddListener(action);
-        public void RemoveInteractedListener(UnityAction<Interactable> action) => _onInteracted.RemoveListener(action);
+        public void AddInteractedListener(UnityAction<InteractedEventInfo> action) => _onInteracted.AddListener(action);
+        public void RemoveInteractedListener(UnityAction<InteractedEventInfo> action) => _onInteracted.RemoveListener(action);
 
         // --------------------------------------------------------------------------------------------
         protected virtual void Start()
@@ -61,6 +80,7 @@ namespace Tofunaut.Deeep.Game
             _input = new ActorInput();
             _targetPosition = transform.localPosition;
             _interactOffset = Vector3.right;
+            _facing = EFacing.Right;
 
             if (_destructible)
             {
@@ -164,11 +184,13 @@ namespace Tofunaut.Deeep.Game
             {
                 _interactOffset = Vector3.left;
                 _spriteRenderer.flipX = true;
+                _facing = EFacing.Left;
             }
             else if (_input.right && CanTurnInteractOffset(Vector3.right))
             {
                 _interactOffset = Vector3.right;
                 _spriteRenderer.flipX = false;
+                _facing = EFacing.Right;
             }
         }
 
@@ -186,7 +208,7 @@ namespace Tofunaut.Deeep.Game
                 interactDelegate = EndInteract;
             }
 
-            Collider2D[] facingColliders = Physics2D.OverlapCircleAll(transform.position + _interactOffset, 0.4f);
+            Collider2D[] facingColliders = Physics2D.OverlapCircleAll(_targetPosition + _interactOffset, 0.4f);
             if (interactDelegate != null)
             {
                 foreach (Collider2D collider in facingColliders)
@@ -242,12 +264,18 @@ namespace Tofunaut.Deeep.Game
                 new TofuAnimation()
                     .Value01(1f, EEaseType.EaseInOutBack, (float newValue) =>
                     {
-                        transform.localRotation = Quaternion.LerpUnclamped(startRot, endRot, newValue);
+                        if(this) // check that we aren't destroyed
+                        {
+                            transform.localRotation = Quaternion.LerpUnclamped(startRot, endRot, newValue);
+                        }
                     })
                     .Then()
                     .Execute(() =>
                     {
-                        Destroy(gameObject);
+                        if(this)
+                        {
+                            Destroy(gameObject);
+                        }
                     })
                     .Play();
             }
@@ -279,6 +307,7 @@ namespace Tofunaut.Deeep.Game
             weapon.OnEquipped();
             weapon.gameObject.SetActive(true);
             weapon.transform.SetParent(transform, false);
+            weapon.transform.localPosition = Vector3.zero;
             _equippedWeapon = weapon;
         }
     }
