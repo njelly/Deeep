@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 8560834921560619674}
   - component: {fileID: 613143116818784631}
   - component: {fileID: 6237120304343102747}
-  - component: {fileID: 5941783972647573687}
+  - component: {fileID: 673054133204274548}
   m_Layer: 8
-  m_Name: LockedDoor_LeftRight
+  m_Name: LockedDoor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -50,7 +50,6 @@ MonoBehaviour:
   _overrideController: {fileID: 22100000, guid: 26996edbeb016bb42b56204f67351363,
     type: 2}
   _isOpen: 0
-  isUpDown: 0
   key: {fileID: 0}
   lockedMessage: It's locked...
   needKeyToCloseMessage: Can't be locked without a key.
@@ -124,8 +123,8 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!61 &5941783972647573687
-BoxCollider2D:
+--- !u!58 &673054133204274548
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -138,15 +137,5 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 5.12, y: 5.12}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
+  m_Radius: 0.5
