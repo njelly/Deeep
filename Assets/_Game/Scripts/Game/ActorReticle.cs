@@ -93,19 +93,22 @@ namespace Tofunaut.Deeep.Game
         {
             Color changeTo = _defaultColor;
 
-            bool facingDestructible = false;
+            Destructible facingDestructible = null;
             Collider2D[] facingColliders = Physics2D.OverlapCircleAll(_actor.transform.position + _actor.InteractOffset, 0.4f);
             foreach (Collider2D collider in facingColliders)
             {
-                facingDestructible |= collider.gameObject != _actor.gameObject && collider.gameObject.GetComponent<Destructible>();
+                if (!facingDestructible && collider.gameObject != _actor.gameObject)
+                {
+                    facingDestructible = collider.gameObject.GetComponent<Destructible>();
+                }
             }
 
-            if (facingDestructible)
+            if (facingDestructible && _actor.EquipedWeapon && _actor.EquipedWeapon.CanAttackDestructible(facingDestructible))
             {
                 changeTo = _attackColor;
             }
 
-            if(!((Vector4)changeTo).IsApproximately(_targetColor))
+            if (!((Vector4)changeTo).IsApproximately(_targetColor))
             {
                 Color startColor = _spriteRenderer.color;
                 _targetColor = changeTo;
@@ -130,12 +133,12 @@ namespace Tofunaut.Deeep.Game
         {
             float alpha = _defaultColor.a;
 
-            if(_actor.Input.space)
+            if (_actor.Input.space)
             {
                 alpha = 1f;
             }
 
-            if(!alpha.IsApproximately(_targetAlpha))
+            if (!alpha.IsApproximately(_targetAlpha))
             {
                 _targetAlpha = alpha;
                 float startAlpha = _spriteRenderer.color.a;

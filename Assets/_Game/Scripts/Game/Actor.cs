@@ -33,12 +33,6 @@ namespace Tofunaut.Deeep.Game
     // --------------------------------------------------------------------------------------------
     public abstract class Actor : MonoBehaviour, ActorInput.IReceiver
     {
-        [Serializable]
-        public struct InteractedEventInfo
-        {
-            public Interactable interactedWith;
-        }
-        protected class InteractedEvent : UnityEvent<InteractedEventInfo> { }
 
         private const float MoveButtonHoldTimeThreshold = 0.08f;
 
@@ -53,9 +47,10 @@ namespace Tofunaut.Deeep.Game
         [SerializeField] protected Weapon _equippedWeapon;
         [SerializeField] protected float _moveSpeed;
         [SerializeField] protected EAlliance _alliance;
+        [SerializeField] protected ActorReticle _reticle;
 
         [Space(10)]
-        [SerializeField] protected InteractedEvent _onInteracted = new InteractedEvent();
+        [SerializeField] protected Interactable.InteractedEvent _onInteracted = new Interactable.InteractedEvent();
 
         public Inventory Inventory => _inventory;
         public Vector3 TilePosition => new Vector3(Mathf.RoundToInt(transform.localPosition.x), Mathf.RoundToInt(transform.localPosition.y));
@@ -64,15 +59,19 @@ namespace Tofunaut.Deeep.Game
         public EAlliance Alliance => _alliance;
         public Weapon EquipedWeapon => _equippedWeapon;
         public EFacing Facing => _facing;
+        public Holdable Holding => _holding;
 
         protected ActorInput _input;
         protected Vector3 _targetPosition;
         protected Vector3 _previousPosition;
         protected Vector3 _interactOffset;
         protected EFacing _facing;
+        protected Holdable _holding;
 
-        public void AddInteractedListener(UnityAction<InteractedEventInfo> action) => _onInteracted.AddListener(action);
-        public void RemoveInteractedListener(UnityAction<InteractedEventInfo> action) => _onInteracted.RemoveListener(action);
+        private Transform _holdingPrevParent;
+
+        public void AddInteractedListener(UnityAction<Interactable.InteractedEventInfo> action) => _onInteracted.AddListener(action);
+        public void RemoveInteractedListener(UnityAction<Interactable.InteractedEventInfo> action) => _onInteracted.RemoveListener(action);
 
         // --------------------------------------------------------------------------------------------
         protected virtual void Start()
@@ -223,7 +222,7 @@ namespace Tofunaut.Deeep.Game
                     foreach (Interactable interactable in interactables)
                     {
                         interactDelegate(interactable);
-                        _onInteracted?.Invoke(new InteractedEventInfo() { interactedWith = interactable });
+                        _onInteracted?.Invoke(new Interactable.InteractedEventInfo() { interactedWith = interactable });
                     }
                 }
             }
@@ -271,7 +270,7 @@ namespace Tofunaut.Deeep.Game
                 new TofuAnimation()
                     .Value01(1f, EEaseType.EaseInOutBack, (float newValue) =>
                     {
-                        if(this) // check that we aren't destroyed
+                        if (this) // check that we aren't destroyed
                         {
                             transform.localRotation = Quaternion.LerpUnclamped(startRot, endRot, newValue);
                         }
@@ -279,12 +278,33 @@ namespace Tofunaut.Deeep.Game
                     .Then()
                     .Execute(() =>
                     {
-                        if(this)
+                        if (this)
                         {
                             Destroy(gameObject);
                         }
                     })
                     .Play();
+            }
+        }
+
+        // --------------------------------------------------------------------------------------------
+        public virtual void Hold(Holdable holdable)
+        {
+            if (_holding)
+            {
+                if (_holdingPrevParent)
+                {
+                    _holding.transform.SetParent(_holdingPrevParent);
+                }
+                _holding.transform.position = _targetPosition + _interactOffset;
+            }
+
+            _holding = holdable;
+
+            if (_holding)
+            {
+                _holdingPrevParent = holdable.transform.parent;
+                _holding.transform.SetParent(_reticle.transform);
             }
         }
 
@@ -304,7 +324,7 @@ namespace Tofunaut.Deeep.Game
         // --------------------------------------------------------------------------------------------
         public void EquipWeapon(Weapon weapon)
         {
-            if(_equippedWeapon)
+            if (_equippedWeapon)
             {
                 _equippedWeapon.OnUnequipped();
                 _inventory.Add(_equippedWeapon);

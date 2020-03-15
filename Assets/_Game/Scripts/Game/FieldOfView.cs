@@ -13,7 +13,7 @@ namespace Tofunaut.Deeep.Game
 {
     public class FieldOfView : MonoBehaviour
     {
-        public IReadOnlyCollection<Collider2D> VisibleTargets => _visibleTargets?.AsReadOnly() ?? new List<Collider2D>().AsReadOnly();
+        public HashSet<Collider2D> VisibleTargets => new HashSet<Collider2D>(_visibleTargets) ?? new HashSet<Collider2D>();
 
         public LayerMask targetMask;
         public float viewRadius;
@@ -34,10 +34,10 @@ namespace Tofunaut.Deeep.Game
         {
             _visibleTargets.Clear();
             Collider2D[] potentialTargets = Physics2D.OverlapCircleAll(transform.position, viewRadius, targetMask);
-            foreach(Collider2D target in potentialTargets)
+            foreach (Collider2D target in potentialTargets)
             {
                 Vector2 toTarget = target.transform.position - transform.position;
-                if(!Physics2D.Raycast(transform.position, toTarget, toTarget.magnitude, LayerMask.GetMask("Blocking")))
+                if (!Physics2D.Raycast(transform.position, toTarget, toTarget.magnitude, LayerMask.GetMask("Blocking")))
                 {
                     _visibleTargets.Add(target);
                 }
@@ -46,7 +46,7 @@ namespace Tofunaut.Deeep.Game
 
         public Vector2 DirFromAngle(float angleInDegrees, bool isGlobal)
         {
-            if(!isGlobal)
+            if (!isGlobal)
             {
                 angleInDegrees += transform.eulerAngles.z;
             }

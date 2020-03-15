@@ -27,9 +27,10 @@ namespace Tofunaut.Deeep.Game
 
         private TofuAnimation _attackSequence;
 
+        // --------------------------------------------------------------------------------------------
         private void OnEnable()
         {
-            if(!owner)
+            if (!owner)
             {
                 transform.rotation = Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
             }
@@ -38,9 +39,9 @@ namespace Tofunaut.Deeep.Game
         // --------------------------------------------------------------------------------------------
         private void Update()
         {
-            if(owner)
+            if (owner)
             {
-                switch(owner.Facing)
+                switch (owner.Facing)
                 {
                     case EFacing.Left:
                         _spriteRenderer.flipX = true;
@@ -53,9 +54,8 @@ namespace Tofunaut.Deeep.Game
         }
 
         // --------------------------------------------------------------------------------------------
-        public virtual void OnEquipped() 
+        public virtual void OnEquipped()
         {
-            Debug.Log("on equipped");
             owner.AddInteractedListener(OnOwnerInteracted);
 
             transform.rotation = Quaternion.identity;
@@ -74,24 +74,23 @@ namespace Tofunaut.Deeep.Game
         }
 
         // --------------------------------------------------------------------------------------------
-        public override void BeginInteract(Actor instigator)
+        protected override void OnBeginInteract(Interactable.InteractedEventInfo info)
         {
             if (inventory)
             {
                 inventory.Remove(this, false);
             }
 
-            inventory = instigator.Inventory;
+            inventory = info.instigator.Inventory;
 
             if (inventory)
             {
                 inventory.Add(this, true, () =>
                 {
-                    if(!instigator.EquipedWeapon)
+                    if (!info.instigator.EquipedWeapon)
                     {
-                        Debug.Log("equip me");
                         inventory.Remove(this, false);
-                        instigator.EquipWeapon(this);
+                        info.instigator.EquipWeapon(this);
                     }
                 });
             }
@@ -100,13 +99,13 @@ namespace Tofunaut.Deeep.Game
         // --------------------------------------------------------------------------------------------
         public virtual bool CanAttackDestructible(Destructible destructible)
         {
-            if(!owner)
+            if (!owner)
             {
                 return false;
             }
 
             Actor destructibleActor = destructible.gameObject.GetComponentInParent<Actor>();
-            if(destructibleActor)
+            if (destructibleActor)
             {
                 return !owner.IsAlliedWith(destructibleActor);
             }
@@ -121,7 +120,7 @@ namespace Tofunaut.Deeep.Game
         }
 
         // --------------------------------------------------------------------------------------------
-        private void OnOwnerInteracted(Actor.InteractedEventInfo info) 
+        private void OnOwnerInteracted(Interactable.InteractedEventInfo info)
         {
             if (_attackSequence != null)
             {
@@ -133,12 +132,14 @@ namespace Tofunaut.Deeep.Game
                 return;
             }
 
-            if (!(info.interactedWith is Destructible))
+            Destructible destructible = info.interactedWith.GetComponent<Destructible>();
+
+            if (!destructible)
             {
                 return;
             }
 
-            CurrentlyAttacking = info.interactedWith as Destructible;
+            CurrentlyAttacking = destructible;
 
             _attackSequence = new TofuAnimation()
                 .Execute(() =>

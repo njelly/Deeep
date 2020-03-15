@@ -40,16 +40,10 @@ namespace Tofunaut.Deeep.Game
         public static PlayerActor Instance { get; private set; }
         public static EMoveMode MoveMode { get; private set; }
 
-        public Holdable Holding { get; private set; }
-
-        [Header("Player")]
-        [SerializeField] private ActorReticle _reticle;
-
         [Space(10)]
         [SerializeField] private MoveModeChangedEvent _moveModeChanged;
         [SerializeField] private UnityEvent _takeTacticalTurn;
 
-        private Transform _holdingPrevParent;
         private bool _playerHasTakenTacticalTurn;
         private TofuAnimation _tacticalTurnCooldownAnimation;
 
@@ -61,7 +55,7 @@ namespace Tofunaut.Deeep.Game
         // --------------------------------------------------------------------------------------------
         private void Awake()
         {
-            if(Instance)
+            if (Instance)
             {
                 Debug.LogError("Only one PlayerActor can exist at a time!");
                 Destroy(gameObject);
@@ -87,7 +81,7 @@ namespace Tofunaut.Deeep.Game
         // --------------------------------------------------------------------------------------------
         protected override void Update()
         {
-            if(MoveMode == EMoveMode.Tactical)
+            if (MoveMode == EMoveMode.Tactical)
             {
                 if (!_playerHasTakenTacticalTurn)
                 {
@@ -125,11 +119,11 @@ namespace Tofunaut.Deeep.Game
 
             if (UnityEngine.Input.GetKeyDown(KeyCode.Tab))
             {
-                if(MoveMode == EMoveMode.FreeMove)
+                if (MoveMode == EMoveMode.FreeMove)
                 {
                     SetMoveMode(EMoveMode.Tactical);
                 }
-                else if(MoveMode == EMoveMode.Tactical)
+                else if (MoveMode == EMoveMode.Tactical)
                 {
                     SetMoveMode(EMoveMode.FreeMove);
                 }
@@ -204,7 +198,7 @@ namespace Tofunaut.Deeep.Game
         {
             if (Holding)
             {
-                if(Holding.canHolderRotate)
+                if (Holding.canHolderRotate)
                 {
                     bool doesCollide = false;
                     foreach (Collider2D collider in Physics2D.OverlapCircleAll(_targetPosition + potentialInteractOffset, 0.4f))
@@ -225,30 +219,9 @@ namespace Tofunaut.Deeep.Game
         }
 
         // --------------------------------------------------------------------------------------------
-        public void Hold(Holdable holdable)
-        {
-            if(Holding)
-            {
-                if(_holdingPrevParent)
-                {
-                    Holding.transform.SetParent(_holdingPrevParent);
-                }
-                Holding.transform.position = _targetPosition + _interactOffset;
-            }
-
-            Holding = holdable;
-
-            if(Holding)
-            {
-                _holdingPrevParent = holdable.transform.parent;
-                Holding.transform.SetParent(_reticle.transform);
-            }
-        }
-
-        // --------------------------------------------------------------------------------------------
         private void SetMoveMode(EMoveMode moveMode)
         {
-            if(moveMode == MoveMode)
+            if (moveMode == MoveMode)
             {
                 return;
             }

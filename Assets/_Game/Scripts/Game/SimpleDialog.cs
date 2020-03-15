@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Holdable (c) 2020 Tofunaut
+//  SimpleDialogInteractable (c) 2020 Tofunaut
 //
 //  Created by Nathaniel Ellingson for Deeep on 02/28/2020
 //
@@ -12,51 +12,36 @@ namespace Tofunaut.Deeep.Game
 {
     // --------------------------------------------------------------------------------------------
     [RequireComponent(typeof(Interactable))]
-    public class Holdable : MonoBehaviour
+    public class SimpleDialog : MonoBehaviour
     {
-        public PlayerActor HeldBy { get; private set; }
+        [SerializeField] private SpriteRenderer _spriteRender;
+        [TextArea] public string dialog;
 
         // --------------------------------------------------------------------------------------------
-        public bool canHolderRotate = true;
-
-        // --------------------------------------------------------------------------------------------
-        private void OnEnable()
+        private void Start()
         {
             Interactable interactable = GetComponent<Interactable>();
             if (interactable)
             {
                 interactable.AddBeginInteractListener(OnBeginInteract);
-                interactable.AddEndInteractListener(OnEndInteract);
             }
         }
 
         // --------------------------------------------------------------------------------------------
-        private void OnDisable()
+        private void OnDestroy()
         {
             Interactable interactable = GetComponent<Interactable>();
             if (interactable)
             {
                 interactable.RemoveBeginInteractListener(OnBeginInteract);
-                interactable.RemoveEndInteractListener(OnEndInteract);
             }
         }
 
         // --------------------------------------------------------------------------------------------
-        private void OnBeginInteract(Interactable.InteractedEventInfo info)
+        protected void OnBeginInteract(Interactable.InteractedEventInfo info)
         {
-            if (HeldBy != null)
-            {
-                return;
-            }
-
-            HeldBy.Hold(this);
-        }
-
-        // --------------------------------------------------------------------------------------------
-        private void OnEndInteract(Interactable.InteractedEventInfo info)
-        {
-            HeldBy.Hold(null);
-            HeldBy = null;
+            HUDManager.HUDDialog.SetMugshot(_spriteRender ? _spriteRender.sprite : null);
+            HUDManager.HUDDialog.ShowDialog(dialog);
         }
     }
 }

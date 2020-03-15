@@ -12,7 +12,7 @@ using UnityEngine;
 namespace Tofunaut.Deeep.Game
 {
     // --------------------------------------------------------------------------------------------
-    public class InventoryItem : Interactable
+    public class InventoryItem : MonoBehaviour
     {
         [HideInInspector, NonSerialized] public Inventory inventory;
         [SerializeField] protected SpriteRenderer _spriteRenderer;
@@ -24,22 +24,39 @@ namespace Tofunaut.Deeep.Game
         public float goldValue;
 
         // --------------------------------------------------------------------------------------------
-        public override void BeginInteract(Actor instigator)
+        private void Start()
         {
-            if(inventory)
+            Interactable interactable = GetComponent<Interactable>();
+            if (interactable)
             {
-                inventory.Remove(this, false);
-            }
-
-            inventory = instigator.Inventory;
-
-            if(inventory)
-            {
-                inventory.Add(this);
+                interactable.AddBeginInteractListener(OnBeginInteract);
             }
         }
 
         // --------------------------------------------------------------------------------------------
-        public override void EndInteract(Actor instigator) { }
+        private void OnDestroy()
+        {
+            Interactable interactable = GetComponent<Interactable>();
+            if (interactable)
+            {
+                interactable.RemoveBeginInteractListener(OnBeginInteract);
+            }
+        }
+
+        // --------------------------------------------------------------------------------------------
+        protected virtual void OnBeginInteract(Interactable.InteractedEventInfo info)
+        {
+            if (inventory)
+            {
+                inventory.Remove(this, false);
+            }
+
+            inventory = info.instigator.Inventory;
+
+            if (inventory)
+            {
+                inventory.Add(this);
+            }
+        }
     }
 }

@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Tofunaut.Deeep.Game
 {
-    public class LockedDoorInteractable : DoorInteractable
+    public class LockedDoor : Door
     {
         [Header("Locked")]
         public KeyItem key;
@@ -18,22 +18,19 @@ namespace Tofunaut.Deeep.Game
         [TextArea] public string needKeyToCloseMessage;
 
         // --------------------------------------------------------------------------------------------
-        public override void BeginInteract(Actor instigator)
+        protected override void OnBeginInteract(Interactable.InteractedEventInfo info)
         {
-            if(key && instigator.Inventory)
+            if (key && info.instigator.Inventory)
             {
-                if (!instigator.Inventory.ContainsItem(key))
+                if (!info.instigator.Inventory.ContainsItem(key))
                 {
                     HUDManager.HUDDialog.ShowDialog(_isOpen ? needKeyToCloseMessage : lockedMessage);
                 }
                 else
                 {
-                    base.BeginInteract(instigator);
+                    base.OnBeginInteract(info);
                 }
             }
         }
-
-        // --------------------------------------------------------------------------------------------
-        public override void EndInteract(Actor instigator) { }
     }
 }
