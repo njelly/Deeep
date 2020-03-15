@@ -241,7 +241,7 @@ namespace Tofunaut.Deeep.Game
         }
 
         // --------------------------------------------------------------------------------------------
-        protected virtual bool CanOccupyPosition(Vector3 position)
+        public virtual bool CanOccupyPosition(Vector3 position)
         {
             return Physics2D.OverlapCircleAll(position.Vector2_XY(), 0.4f, LayerMask.GetMask("Blocking", "Actor")).Length == 0;
         }

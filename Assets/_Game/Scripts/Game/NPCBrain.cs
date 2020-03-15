@@ -1,6 +1,15 @@
+///////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  NPCBrain (c) 2020 Tofunaut
+//
+//  Created by Nathaniel Ellingson for Deeep on 03/15/2020
+//
+///////////////////////////////////////////////////////////////////////////////////////////////
+
 using Tofunaut.UnityUtils;
 using System.Collections.Generic;
 using UnityEngine;
+using Tofunaut.Core;
 
 namespace Tofunaut.Deeep.Game
 {
@@ -13,8 +22,10 @@ namespace Tofunaut.Deeep.Game
         [SerializeField] protected FieldOfView _fieldOfView;
 
         public Collider2D CurrentTarget { get; private set; }
+        public IntVector2[] CurrentPath => _currentPath;
 
         private Vector3 _prevTargetPosition;
+        private IntVector2[] _currentPath;
 
         // SKELETONS THROW THEIR RIBS AT YOU (When angry?) - Olga
         // So maybe there's a class of skeletons with a projectile weapon? (Minecraft skellies)
@@ -34,6 +45,19 @@ namespace Tofunaut.Deeep.Game
         {
             // always evaluate the current target (if any)
             CheckCurrentTarget();
+
+            if (CurrentTarget)
+            {
+                if (!_prevTargetPosition.IsApproximately(CurrentTarget.transform.position))
+                {
+                    _currentPath = PathFinder.FindPath(
+                        new IntVector2(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y)),
+                        new IntVector2(Mathf.RoundToInt(CurrentTarget.transform.position.x), Mathf.RoundToInt(CurrentTarget.transform.position.y)),
+                        _actor);
+                }
+
+                _prevTargetPosition = CurrentTarget.transform.position.RoundToInt();
+            }
         }
 
         protected virtual void CheckCurrentTarget()
@@ -48,7 +72,6 @@ namespace Tofunaut.Deeep.Game
                 });
 
                 CurrentTarget = availableTargets[0];
-                _prevTargetPosition = CurrentTarget.transform.position.RoundToInt();
             }
         }
 

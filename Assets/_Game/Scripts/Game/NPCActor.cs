@@ -11,6 +11,7 @@ namespace Tofunaut.Deeep.Game
     // --------------------------------------------------------------------------------------------
     public class NPCActor : Actor
     {
+
         // --------------------------------------------------------------------------------------------
         protected override void Start()
         {
@@ -23,9 +24,11 @@ namespace Tofunaut.Deeep.Game
         }
 
         // --------------------------------------------------------------------------------------------
-        protected virtual void OnDestroy()
+        protected override void OnDestroy()
         {
-            if(PlayerActor.Instance)
+            base.OnDestroy();
+
+            if (PlayerActor.Instance)
             {
                 PlayerActor.Instance.RemoveMoveModeChangedListener(OnMoveModeChanged);
             }
@@ -41,7 +44,7 @@ namespace Tofunaut.Deeep.Game
                     PlayerActor.Instance.RemoveTakeTacticalTurnListener(OnTakeTacticalTurn);
                 }
             }
-            if(info.currentMode == PlayerActor.EMoveMode.Tactical)
+            if (info.currentMode == PlayerActor.EMoveMode.Tactical)
             {
                 if (PlayerActor.Instance)
                 {
