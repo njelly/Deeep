@@ -18,12 +18,7 @@ namespace Tofunaut.Deeep.Game
         public LayerMask targetMask;
         public float viewRadius;
 
-        private List<Collider2D> _visibleTargets;
-
-        private void Start()
-        {
-            _visibleTargets = new List<Collider2D>();
-        }
+        private List<Collider2D> _visibleTargets = new List<Collider2D>();
 
         private void Update()
         {

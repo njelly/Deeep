@@ -22,10 +22,9 @@ namespace Tofunaut.Deeep.Game
         [SerializeField] protected FieldOfView _fieldOfView;
 
         public Collider2D CurrentTarget { get; private set; }
-        public IntVector2[] CurrentPath => _currentPath;
+        public IntVector2[] CurrentPath { get; private set; } = new IntVector2[0];
 
         private Vector3 _prevTargetPosition;
-        private IntVector2[] _currentPath;
 
         // SKELETONS THROW THEIR RIBS AT YOU (When angry?) - Olga
         // So maybe there's a class of skeletons with a projectile weapon? (Minecraft skellies)
@@ -50,7 +49,7 @@ namespace Tofunaut.Deeep.Game
             {
                 if (!_prevTargetPosition.IsApproximately(CurrentTarget.transform.position))
                 {
-                    _currentPath = PathFinder.FindPath(
+                    CurrentPath = PathFinder.FindPath(
                         new IntVector2(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y)),
                         new IntVector2(Mathf.RoundToInt(CurrentTarget.transform.position.x), Mathf.RoundToInt(CurrentTarget.transform.position.y)),
                         _actor);

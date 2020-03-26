@@ -1,6 +1,7 @@
 using Tofunaut.UnityUtils;
 using Tofunaut.Core;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Tofunaut.Deeep.Game
 {
@@ -21,14 +22,23 @@ namespace Tofunaut.Deeep.Game
                 h = 0,
             });
 
+            int counter = 0;
             while (open.Count > 0)
             {
+                counter++;
+
                 List<IntVector2AsAStarNode> openAsList = new List<IntVector2AsAStarNode>(open);
                 // sort the open list ascending by f value
                 openAsList.Sort((IntVector2AsAStarNode a, IntVector2AsAStarNode b) =>
                 {
                     return a.f.CompareTo(b.f);
                 });
+
+                if(counter > 9999)
+                {
+                    Debug.LogError("infinite loop detected");
+                    break;
+                }
 
                 // set the current node to the node with the least f
                 IntVector2AsAStarNode currentNode = openAsList[0];
@@ -70,8 +80,7 @@ namespace Tofunaut.Deeep.Game
                     childNode.f = childNode.g + childNode.h;
 
                     // check if we've visited this coord but now we have a better path to it
-                    bool foundBetterPath = false;
-                    bool haveVisited = false;
+                    bool alreadyVisited = false;
                     foreach (IntVector2AsAStarNode openNode in open)
                     {
                         if (!openNode.coord.Equals(coord))
@@ -79,22 +88,28 @@ namespace Tofunaut.Deeep.Game
                             continue;
                         }
 
-                        haveVisited = true;
-
-                        if (openNode.f < childNode.f)
+                        if (openNode.f <= childNode.f)
                         {
                             continue;
                         }
 
-                        // we've found a better node!
                         openNode.g = childNode.g;
                         openNode.h = childNode.h;
                         openNode.f = childNode.f;
                         openNode.previous = childNode.previous;
-                        foundBetterPath = true;
+                        alreadyVisited = true;
                     }
 
-                    if (!haveVisited || !foundBetterPath)
+                    foreach(IntVector2AsAStarNode closedNode in closed)
+                    {
+                        if(closedNode.coord.Equals(coord))
+                        {
+                            alreadyVisited = true;
+                            break;
+                        }
+                    }
+
+                    if (!alreadyVisited)
                     {
                         open.Add(childNode);
                     }
