@@ -119,7 +119,7 @@ namespace Tofunaut.Deeep.Game
         }
 
         // --------------------------------------------------------------------------------------------
-        public void ReceivePlayerInput(ActorInput input)
+        public void ReceiveInput(ActorInput input)
         {
             _input = input;
         }

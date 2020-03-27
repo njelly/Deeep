@@ -23,7 +23,7 @@ namespace Tofunaut.Deeep.Game
         public static void Remove(ActorInput.IReceiver receiver) 
         {
             // clear the receiver's current input by sending an empty one
-            receiver?.ReceivePlayerInput(new ActorInput());
+            receiver?.ReceiveInput(new ActorInput());
             _instance?._receivers.Remove(receiver);
         }
 
@@ -32,7 +32,7 @@ namespace Tofunaut.Deeep.Game
             _input = ActorInput.PollPlayerInput(_input);
             foreach (ActorInput.IReceiver receiver in _receivers)
             {
-                receiver.ReceivePlayerInput(_input);
+                receiver.ReceiveInput(_input);
             }
         }
     }

@@ -253,7 +253,7 @@ namespace Tofunaut.Deeep.Game
         }
 
         // --------------------------------------------------------------------------------------------
-        public void ReceivePlayerInput(ActorInput input)
+        public void ReceiveInput(ActorInput input)
         {
             _input = input;
         }
@@ -344,7 +344,7 @@ namespace Tofunaut.Deeep.Game
     {
         public interface IReceiver
         {
-            void ReceivePlayerInput(ActorInput input);
+            void ReceiveInput(ActorInput input);
         }
 
         public ActorInputButton up, down, left, right, shift, space, one, two, three, four;

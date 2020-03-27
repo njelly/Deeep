@@ -24,7 +24,8 @@ namespace Tofunaut.Deeep.Game
         public Collider2D CurrentTarget { get; private set; }
         public IntVector2[] CurrentPath { get; private set; } = new IntVector2[0];
 
-        private Vector3 _prevTargetPosition;
+        protected Vector3 _prevTargetPosition;
+        protected ActorInput _input;
 
         // SKELETONS THROW THEIR RIBS AT YOU (When angry?) - Olga
         // So maybe there's a class of skeletons with a projectile weapon? (Minecraft skellies)
@@ -33,6 +34,7 @@ namespace Tofunaut.Deeep.Game
         protected virtual void Start()
         {
             PlayerActor.Instance.AddMoveModeChangedListener(OnMoveModeChanged);
+            _input = new ActorInput();
         }
 
         protected virtual void OnDestroy()
@@ -54,9 +56,12 @@ namespace Tofunaut.Deeep.Game
                         new IntVector2(Mathf.RoundToInt(CurrentTarget.transform.position.x), Mathf.RoundToInt(CurrentTarget.transform.position.y)),
                         _actor);
                 }
-
                 _prevTargetPosition = CurrentTarget.transform.position.RoundToInt();
             }
+
+            PollInput();
+
+            _actor.ReceiveInput(_input);
         }
 
         protected virtual void CheckCurrentTarget()
@@ -73,6 +78,63 @@ namespace Tofunaut.Deeep.Game
                 CurrentTarget = availableTargets[0];
             }
         }
+
+        protected virtual void PollInput()
+        {
+            _input.up.wasDown = _input.up;
+            _input.down.wasDown = _input.down;
+            _input.left.wasDown = _input.left;
+            _input.right.wasDown = _input.right;
+
+            if (CurrentPath.Length > 1)
+            {
+                IntVector2 toNextPathPoint = CurrentPath[1] - transform.position.ToIntVector2_XY();
+
+                if(toNextPathPoint.y > 0)
+                {
+                    _input.up.timeDown += Time.deltaTime;
+                }
+                else
+                {
+                    _input.up.timeDown = 0f;
+                }
+                
+                if(toNextPathPoint.y < 0)
+                {
+                    _input.down.timeDown += Time.deltaTime;
+                }
+                else
+                {
+                    _input.down.timeDown = 0f;
+                }
+
+                if (toNextPathPoint.x < 0)
+                {
+                    _input.left.timeDown += Time.deltaTime;
+                }
+                else
+                {
+                    _input.left.timeDown = 0f;
+                }
+
+                if (toNextPathPoint.x > 0)
+                {
+                    _input.right.timeDown += Time.deltaTime;
+                }
+                else
+                {
+                    _input.right.timeDown = 0f;
+                }
+            }
+            else
+            {
+                _input.up.timeDown = 0f;
+                _input.down.timeDown = 0f;
+                _input.left.timeDown = 0f;
+                _input.right.timeDown = 0f;
+            }
+        }
+
 
         ///<summary>
         /// Prefered targets should return LESS (-1) values.
